@@ -1,0 +1,244 @@
+{
+  "archetypes": {
+    "0": {
+      "name": "The Overloaded Achiever",
+      "emoji": "\ud83c\udfc6",
+      "description": "High grades, high stress, perfectionist tendencies. You push yourself harder than anyone but often forget to recharge.",
+      "color": "#F59E0B",
+      "strengths": [
+        "High dedication",
+        "Academic excellence",
+        "Self-discipline"
+      ],
+      "areas": [
+        "Work-life balance",
+        "Stress regulation",
+        "Rest & recovery"
+      ],
+      "daily_routine": "6:00 AM Wake + 10 min stretch | 6:30-8:00 AM Focused study | 8:30 AM Breakfast + walk | 9:00-12:00 PM Classes | 1:00 PM Lunch break (screen-free) | 2:00-4:00 PM Short study bursts (Pomodoro) | 4:30-5:30 PM Outdoor activity | 6:00-8:00 PM Light revision | 9:00 PM Wind-down | 10:30 PM Sleep",
+      "stress_tips": [
+        "Evening walks in Vetal Tekdi, Pune",
+        "5-minute breathing exercise before exams",
+        "Journaling daily wins"
+      ],
+      "books": [
+        "Atomic Habits \u2013 James Clear",
+        "The Achievement Habit \u2013 Bernard Roth",
+        "Why Zebras Don't Get Ulcers \u2013 Robert Sapolsky"
+      ],
+      "games": [
+        "Chess (strategy + focus)",
+        "Sudoku puzzles"
+      ],
+      "edtech": [
+        "Coursera \u2013 Deep specialisation courses",
+        "NPTEL \u2013 Structured academic content"
+      ]
+    },
+    "1": {
+      "name": "The Disengaged Drifter",
+      "emoji": "\ud83c\udf0a",
+      "description": "Low attendance, low motivation, high screen time. You have potential locked inside, just needing the right trigger.",
+      "color": "#3B82F6",
+      "strengths": [
+        "Creative thinking",
+        "Adaptability",
+        "Out-of-box ideas"
+      ],
+      "areas": [
+        "Consistency",
+        "Goal clarity",
+        "Reducing passive screen time"
+      ],
+      "daily_routine": "7:00 AM Wake | 7:30-8:30 AM Light reading (topic of interest) | 9:00 AM Attend all classes | 1:00-2:00 PM Lunch + social break | 2:00-4:00 PM Self-study (gamified \u2013 YouTube + quiz) | 4:30-5:30 PM Sport/group activity | 7:00-8:00 PM Revisit one topic | 10:30 PM Sleep",
+      "stress_tips": [
+        "Join a tech club or society at college",
+        "Set tiny 15-min study goals",
+        "Reward yourself after completing tasks"
+      ],
+      "books": [
+        "Start with Why \u2013 Simon Sinek",
+        "The 5 AM Club \u2013 Robin Sharma",
+        "Drive \u2013 Daniel Pink"
+      ],
+      "games": [
+        "Duolingo (habit building)",
+        "CodeWars (programming puzzles)"
+      ],
+      "edtech": [
+        "YouTube channels relevant to branch",
+        "Unacademy \u2013 Short, engaging lessons"
+      ]
+    },
+    "2": {
+      "name": "The Silent Struggler",
+      "emoji": "\ud83c\udf38",
+      "description": "Appears fine externally but carries high internal anxiety and self-doubt. Your resilience is a superpower you haven't discovered yet.",
+      "color": "#EC4899",
+      "strengths": [
+        "Empathy",
+        "Attention to detail",
+        "Quiet observation"
+      ],
+      "areas": [
+        "Self-confidence",
+        "Expressing needs",
+        "Building support network"
+      ],
+      "daily_routine": "7:00 AM Wake + 5 min gratitude journaling | 8:00 AM Study (with calming background music) | 10:00 AM Connect with one friend/classmate | 1:00 PM Lunch (eat with others, not alone) | 2:00-4:00 PM Study group or library | 5:00 PM Hobby time | 8:00 PM Gentle yoga or stretching | 10:30 PM Sleep",
+      "stress_tips": [
+        "Talk to your college counsellor once a week",
+        "Join Toastmasters or any speaking club",
+        "Keep a confidence journal \u2013 3 wins per day"
+      ],
+      "books": [
+        "The Confidence Code \u2013 Katty Kay",
+        "Feel the Fear and Do It Anyway \u2013 Susan Jeffers",
+        "The Gifts of Imperfection \u2013 Bren\u00e9 Brown"
+      ],
+      "games": [
+        "Mindfulness colouring apps",
+        "Story-based puzzle games"
+      ],
+      "edtech": [
+        "Coursera \u2013 Personality and soft skills courses",
+        "Khan Academy \u2013 Build confidence in weak subjects"
+      ]
+    },
+    "3": {
+      "name": "The Social Learner",
+      "emoji": "\ud83e\udd1d",
+      "description": "Thrives in group environments, loves peer interaction, and performs best in collaborative settings.",
+      "color": "#10B981",
+      "strengths": [
+        "Team player",
+        "Communication skills",
+        "Motivating others"
+      ],
+      "areas": [
+        "Solo focus time",
+        "Reducing social dependency for studying",
+        "Online learning comfort"
+      ],
+      "daily_routine": "7:00 AM Wake | 8:00-9:00 AM Solo prep | 9:00 AM Classes | 1:00-1:30 PM Group lunch discussion | 2:00-4:00 PM Study circle with friends | 5:00-6:00 PM Sport or cultural activity | 7:00-8:00 PM Solo revision | 10:30 PM Sleep",
+      "stress_tips": [
+        "Join Pune's student study groups (Viman Nagar, FC Road area)",
+        "Teach a classmate \u2013 it reinforces your own learning",
+        "Participate in hackathons or group projects"
+      ],
+      "books": [
+        "How to Win Friends and Influence People \u2013 Dale Carnegie",
+        "The Culture Code \u2013 Daniel Coyle",
+        "Quiet \u2013 Susan Cain (understanding introverts helps you lead better)"
+      ],
+      "games": [
+        "Multiplayer strategy games",
+        "Group quiz challenges"
+      ],
+      "edtech": [
+        "Byju's Live Classes",
+        "Vedantu \u2013 Interactive live sessions"
+      ]
+    },
+    "4": {
+      "name": "The Digital Native",
+      "emoji": "\ud83d\udcbb",
+      "description": "High digital comfort, thrives with self-paced online learning. You are ahead of the curve in adaptability.",
+      "color": "#8B5CF6",
+      "strengths": [
+        "Tech savviness",
+        "Self-discipline for online learning",
+        "Research skills"
+      ],
+      "areas": [
+        "Physical activity",
+        "Screen time regulation",
+        "Offline social connections"
+      ],
+      "daily_routine": "7:00 AM Wake | 8:00 AM Study online (focused block) | 10:00 AM 20-min screen break + walk | 11:00 AM Continue or attend online class | 1:30 PM Lunch + offline activity | 3:00-5:00 PM Project/coding/research | 6:00 PM Physical activity (gym, walk, sport) | 8:00 PM Revision | 10:30 PM Sleep (phone off 1 hr before)",
+      "stress_tips": [
+        "20-20-20 rule for screen break",
+        "Blue light glasses in the evening",
+        "Pune's tech meetups and hackathons for in-person connection"
+      ],
+      "books": [
+        "Deep Work \u2013 Cal Newport",
+        "The Shallows \u2013 Nicholas Carr",
+        "Range \u2013 David Epstein"
+      ],
+      "games": [
+        "Duolingo",
+        "Lumosity \u2013 Brain training"
+      ],
+      "edtech": [
+        "Coursera \u2013 Professional certificates",
+        "MIT OpenCourseWare",
+        "GitHub Learning Lab"
+      ]
+    },
+    "5": {
+      "name": "The Resilient Balanced",
+      "emoji": "\u2696\ufe0f",
+      "description": "Moderate stress, good sleep, balanced life. You are the most psychologically stable archetype. Keep growing.",
+      "color": "#06B6D4",
+      "strengths": [
+        "Emotional balance",
+        "Consistency",
+        "Adaptability"
+      ],
+      "areas": [
+        "Pushing beyond comfort zone",
+        "Advanced skill development",
+        "Leadership"
+      ],
+      "daily_routine": "6:30 AM Wake | 7:00 AM Exercise or yoga | 8:00-9:00 AM Study | 9:30 AM Classes | 1:30 PM Lunch | 2:30-4:30 PM Study or project | 5:00-6:00 PM Hobby/club activity | 7:00-8:00 PM Reading/revision | 9:30 PM Relaxation | 10:30 PM Sleep",
+      "stress_tips": [
+        "Practice mindfulness to deepen emotional intelligence",
+        "Mentor a struggling peer",
+        "Take on leadership in academic clubs"
+      ],
+      "books": [
+        "Thinking, Fast and Slow \u2013 Daniel Kahneman",
+        "Mindset \u2013 Carol Dweck",
+        "Leaders Eat Last \u2013 Simon Sinek"
+      ],
+      "games": [
+        "Strategy board games",
+        "Creative writing challenges"
+      ],
+      "edtech": [
+        "Coursera \u2013 Leadership and advanced specialisations",
+        "LinkedIn Learning \u2013 Professional growth"
+      ]
+    }
+  },
+  "learning_mode_desc": {
+    "Online": {
+      "icon": "\ud83c\udf10",
+      "desc": "You thrive with self-paced, digital learning. Online learning suits your independent nature and digital comfort.",
+      "tips": [
+        "Use Pomodoro technique",
+        "Block distracting websites",
+        "Join online study groups"
+      ]
+    },
+    "Offline": {
+      "icon": "\ud83c\udfeb",
+      "desc": "You learn best in structured, face-to-face environments. Offline learning supports your social and hands-on style.",
+      "tips": [
+        "Attend all classes",
+        "Form study groups",
+        "Use library and lab resources"
+      ]
+    },
+    "Hybrid": {
+      "icon": "\ud83d\udd00",
+      "desc": "You benefit from a mix of both worlds \u2013 online flexibility and offline engagement. A hybrid approach is your sweet spot.",
+      "tips": [
+        "Blend EdTech with classroom learning",
+        "Reserve complex topics for in-person help",
+        "Use weekends for online exploration"
+      ]
+    }
+  }
+}
