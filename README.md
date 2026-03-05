@@ -10,10 +10,12 @@ MindMap is an **AI-powered web application** designed to evaluate and understand
 3. [What are its benefits?](#-what-are-its-benefits)
 4. [What's New — Key Features](#-whats-new--key-features)
 5. [How the App Works — Flowcharts](#-how-the-app-works--flowcharts)
-6. [Using the Dashboards](#-using-the-dashboards)
-7. [Tech Stack](#%EF%B8%8F-tech-stack)
-8. [Getting Started (Beginner Friendly)](#-getting-started-beginner-friendly)
-9. [Project File Structure](#-project-file-structure)
+6. [Screenshots & Example PDF](#-screenshots--example-pdf-report)
+7. [What Algorithms Does it Use?](#-what-algorithms-does-it-use)
+8. [Using the Dashboards](#-using-the-dashboards)
+9. [Tech Stack](#%EF%B8%8F-tech-stack)
+10. [Getting Started (Beginner Friendly)](#-getting-started-beginner-friendly)
+11. [Project File Structure](#-project-file-structure)
 
 ---
 
@@ -124,6 +126,37 @@ flowchart TD
     N --> O
     O --> P([🏆 Results Dashboard & PDF Report])
 ```
+
+---
+
+## 📸 Screenshots & Example PDF Report
+
+*Note: You can add screenshots of your running app by placing them in the `assets/` directory and uncommenting the links below.*
+
+- **Example PDF Report:** We've included a sample of the generated PDF report in this repository so you can see exactly what the final output looks like. 👉 [Download Example PDF Report](./example_report.pdf)
+
+*(Add your screenshots like this:)*
+- **Home Dashboard:** `![Home Dashboard](./assets/placeholder.png)` 
+- **Assessment Form:** `![Assessment](./assets/placeholder.png)` 
+- **Student Results:** `![Results](./assets/placeholder.png)` 
+
+---
+
+## 🧠 What Algorithms Does it Use?
+
+MindMap is not just a standard web form; it uses **Machine Learning** algorithms to understand and predict student behaviors. 
+
+1. **K-Means Clustering (Unsupervised Learning):**
+   - **Why we used it:** To group students into clusters (Archetypes) based on similarities in their behavior (e.g., students who sleep less and use phones more are grouped together). 
+   - **How it works:** Taking a 37-feature data vector derived from the questionnaire, K-Means groups the student into one of several predefined clusters. If they match a cluster associated with high stress and low motivation, they are flagged as "At-Risk."
+   - **Where in code:** Used in `utils/preprocessor.py` via a pre-trained `kmeans_archetype.pkl` model.
+
+2. **Mathematical Normalization and Aggregation (Calculus):**
+   - **Action:** Combines data points using specific weights to formulate human-readable metrics.
+   - **Example:** `Anxiety Level` = (Self-Doubt Value + Exam Blanking Frequency + Lack of Sleep).
+   
+3. **Label Encoding and Min-Max Scaling (Data Preparation):**
+   - Before any algorithm can predict, text answers (like "Often" or "Never") are encoded into numbers using Scikit-Learn's `LabelEncoder`, and then scaled to a uniform range using `MinMaxScaler`.
 
 ---
 
