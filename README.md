@@ -70,17 +70,33 @@ flowchart TD
     I -->|Teacher| M[👨‍🏫 View Teacher Analytics]
 ```
 
-### 2. Data Processing Flow
+### 2. Data Processing & Machine Learning Flow (`preprocessor.py`)
+This chart explains step-by-step how user answers are converted into the final scores and ML predictions.
+
 ```mermaid
-flowchart LR
-    A[Raw Answers\\n(e.g., Sleep, Study Hrs)] --> B[Pre-processing\\n(utils/preprocessor.py)]
-    B --> C[Label Encoders\\n(Convert Text to Numbers)]
-    C --> D[Scalers\\n(Normalize Data)]
-    D --> E[Feature Vector Creation]
-    E --> F[K-Means Clustering\\n(Predict Archetype)]
-    E --> G[Mathematical Models\\n(Stress & Anxiety Index)]
-    F --> H[Final Output to UI]
-    G --> H
+flowchart TD
+    A([📝 Student Submits Questionnaire]) --> B{Data Split}
+
+    %% Mathematical Scoring Path
+    B -->|Path 1: Direct Calculations| C[🧮 Compute Base Scores]
+    C --> D(Stress Index: Sleep + Workload + Phone Hrs)
+    C --> E(Anxiety Level: Self-Doubt + Confidence)
+    C --> F(Motivation Score: Goals + Tech Usage)
+    C --> G(Social Isolation: Friends + Interaction)
+    D & E & F & G --> H[📈 Calculate Overall Health Score]
+
+    %% Machine Learning Path
+    B -->|Path 2: Machine Learning Pipeline| I[⚙️ Feature Encoding]
+    I --> J[🔡 Label Encoders: Convert Text to Numbers]
+    J --> K[⚖️ Data Scaler: Normalize all numbers]
+    K --> L[🧬 Create Numeric Feature Vector]
+    L --> M[🤖 K-Means Clustering Model]
+    M --> N[🔮 Predict Student Archetype]
+
+    %% Synthesis
+    H --> O{📊 Final Output Displayed on UI}
+    N --> O
+    O --> P([🏆 Results Dashboard & PDF Report])
 ```
 
 ---
