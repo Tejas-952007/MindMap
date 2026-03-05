@@ -78,25 +78,9 @@ It runs beautifully in your browser and supports **English, Marathi, and Hindi**
 
 ## 🏗️ Project Architecture
 
-```mermaid
-mindmap
-  root((MindMap Application))
-    Frontend (User Interface)
-      Web Browser Access
-      Streamlit UI Modules
-      Multilingual Forms
-    Backend (Python)
-      Session State Management
-      Routing Engine
-    Machine Learning
-      Label Encoders & Scalers
-      K-Means Clustering
-      Score Aggregation
-    Outputs & Reports
-      Interactive Dashboards
-      fpdf2 PDF Generator
-      Teacher/Parent Insights
-```
+*(Note: Add your actual architecture diagram image here by replacing `assets/architecture.png`)*
+
+![MindMap Architecture Diagram](./assets/architecture.png)
 
 ### High-Level System Design
 MindMap follows a stateless, simple, yet powerful architecture:
