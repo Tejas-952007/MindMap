@@ -131,14 +131,16 @@ flowchart TD
 
 ## 📸 Screenshots & Example PDF Report
 
-*Note: You can add screenshots of your running app by placing them in the `assets/` directory and uncommenting the links below.*
+- **Example PDF Report:** A sample of the generated PDF report is included in this repository. You can view exactly what the final output looks like here: 👉 [Download Example PDF Report](./example_report.pdf)
 
-- **Example PDF Report:** We've included a sample of the generated PDF report in this repository so you can see exactly what the final output looks like. 👉 [Download Example PDF Report](./example_report.pdf)
+**1. Home Dashboard**
+![Home Dashboard](./assets/home.png)
 
-*(Add your screenshots like this:)*
-- **Home Dashboard:** `![Home Dashboard](./assets/placeholder.png)` 
-- **Assessment Form:** `![Assessment](./assets/placeholder.png)` 
-- **Student Results:** `![Results](./assets/placeholder.png)` 
+**2. Assessment Form**
+![Assessment Page](./assets/assessment.png)
+
+**3. Student Results Dashboard**
+![Results Dashboard](./assets/results.png) 
 
 ---
 
