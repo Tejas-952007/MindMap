@@ -9,9 +9,10 @@ MindMap is an **AI-powered web application** designed to evaluate and understand
 2. [Where can this be used? (Use Cases)](#-where-can-this-be-used-use-cases)
 3. [What are its benefits?](#-what-are-its-benefits)
 4. [What's New — Key Features](#-whats-new--key-features)
-5. [How the App Works — Flowcharts](#-how-the-app-works--flowcharts)
-6. [Screenshots & Example PDF](#-screenshots--example-pdf-report)
-7. [What Algorithms Does it Use?](#-what-algorithms-does-it-use)
+5. [Project Architecture](#%EF%B8%8F-project-architecture)
+6. [How the App Works — Flowcharts](#-how-the-app-works--flowcharts)
+7. [Screenshots & Example PDF](#-screenshots--example-pdf-report)
+8. [What Algorithms Does it Use?](#-what-algorithms-does-it-use)
 8. [Using the Dashboards](#-using-the-dashboards)
 9. [Tech Stack](#%EF%B8%8F-tech-stack)
 10. [Getting Started (Beginner Friendly)](#-getting-started-beginner-friendly)
@@ -72,6 +73,22 @@ It runs beautifully in your browser and supports **English, Marathi, and Hindi**
 
 4. **📄 PDF Report Generation**
    - Downloadable, printer-friendly PDF reports containing charts and detailed analysis.
+
+---
+
+## 🏗️ Project Architecture
+
+*(You can replace the placeholder below with your actual architecture diagram image once you have it)*
+
+![MindMap Architecture](./assets/architecture.png)
+
+### High-Level System Design
+MindMap follows a stateless, simple, yet powerful architecture:
+1. **Frontend (Streamlit UI):** Users access the app directly via the browser. Forms and dashboards are dynamically generated here.
+2. **Backend Logic:** Also managed by Python via Streamlit. Handles routing and session state.
+3. **Data Preprocessor (`utils/preprocessor.py`):** Takes raw form inputs and transforms them into scaled feature vectors.
+4. **Machine Learning Models (`models/*.pkl`):** Pre-trained models are loaded into memory to instantly predict student archetypes and warning flags.
+5. **Report Service:** Uses `fpdf2` to construct a dynamic, heavily customized PDF with Unicode support and automated layout.
 
 ---
 
