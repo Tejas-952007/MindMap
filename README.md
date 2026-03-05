@@ -6,12 +6,14 @@ MindMap is an **AI-powered web application** designed to evaluate and understand
 
 ## 📚 Table of Contents
 1. [What is MindMap?](#-what-is-mindmap)
-2. [What's New — Key Features](#-whats-new--key-features)
-3. [How the App Works — Flowcharts](#-how-the-app-works--flowcharts)
-4. [Using the Dashboards](#-using-the-dashboards)
-5. [Tech Stack](#%EF%B8%8F-tech-stack)
-6. [Getting Started (Beginner Friendly)](#-getting-started-beginner-friendly)
-7. [Project File Structure](#-project-file-structure)
+2. [Where can this be used? (Use Cases)](#-where-can-this-be-used-use-cases)
+3. [What are its benefits?](#-what-are-its-benefits)
+4. [What's New — Key Features](#-whats-new--key-features)
+5. [How the App Works — Flowcharts](#-how-the-app-works--flowcharts)
+6. [Using the Dashboards](#-using-the-dashboards)
+7. [Tech Stack](#%EF%B8%8F-tech-stack)
+8. [Getting Started (Beginner Friendly)](#-getting-started-beginner-friendly)
+9. [Project File Structure](#-project-file-structure)
 
 ---
 
@@ -24,6 +26,30 @@ Instead of a boring form, it acts as an intelligent assistant:
 > 📊 *It instantly generates scores for Stress, Anxiety, Motivation, and Overall Health.*
 
 It runs beautifully in your browser and supports **English, Marathi, and Hindi**, making it accessible to a wider audience!
+
+---
+
+## 🎯 Where can this be used? (Use Cases)
+हा प्रोजेक्ट कुठे आणि कोण वापरू शकतं?
+
+1. **🏫 Schools and Colleges:**
+   - To monitor the overall mental health of students in a class or college without making them feel uncomfortable.
+   - Teachers can identify students who are "At-Risk" due to high academic stress or social isolation and provide counseling.
+2. **👨‍👩‍👧 Parents at Home:**
+   - Instead of asking, "Why are your marks low?" parents can use this to understand if screen time, poor sleep, or anxiety is the real issue.
+3. **👩‍⚕️ Student Counselors:**
+   - As an initial survey tool before actual therapy sessions to save time and immediately understand what's troubling the student.
+4. **🧠 Self-Assessment for Students:**
+   - Whenever a student feels lost or unmotivated, they can take this test to see their personal "Archetype" and get automated actionable suggestions.
+
+---
+
+## 💡 What are its benefits? (फायदे)
+
+- **Early Detection of Problems:** Identify issues like depression, isolation, or high exam anxiety before they cause academic failure or serious mental health crises.
+- **Data-Driven (Not Guesswork):** Uses real Data Science and ML to connect sleep habits, phone usage, and grades, giving a clear picture (e.g. "Low sleep + 5hrs phone = High Anxiety").
+- **Language is no Barrier:** Because it supports Hindi and Marathi, students from rural areas (ग्रामीण भाग) or regional schools can answer honestly without worrying about English fluency.
+- **Privacy First, Actionable Output:** Generates reports that don't just dump numbers, but actually tell parents and teachers *what to do next*.
 
 ---
 
