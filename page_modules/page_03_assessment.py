@@ -123,7 +123,7 @@ def show(lang: str = "en"):
         confidence = st.select_slider("", options=conf_emojis,
                                       value=st.session_state.answers.get("confidence_label",
                                                                           conf_emojis[2]),
-                                      key="q_conf")
+                                      key="q_conf", label_visibility="collapsed")
         conf_val = conf_emojis.index(confidence) + 1
 
         c9, c10 = st.columns(2)
