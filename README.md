@@ -260,4 +260,11 @@ Here is what each file and folder does:
 
 ---
 
+## 👥 Project Contributors
+
+- **Tejas** ([@Tejas-952007](https://github.com/Tejas-952007)) - Lead Developer
+- **Snehal** ([@snehal-p10](https://github.com/snehal-p10)) - Contributor
+
+---
+
 **Disclaimer:** MindMap is an educational screening tool and *not a clinical diagnostic device*. It provides insights to help students, parents, and teachers take timely actions. Severe cases should always consult mental health professionals.
