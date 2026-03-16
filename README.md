@@ -33,7 +33,6 @@ It runs beautifully in your browser and supports **English, Marathi, and Hindi**
 ---
 
 ## 🎯 Where can this be used? (Use Cases)
-हा प्रोजेक्ट कुठे आणि कोण वापरू शकतं?
 
 1. **🏫 Schools and Colleges:**
    - To monitor the overall mental health of students in a class or college without making them feel uncomfortable.
@@ -47,11 +46,11 @@ It runs beautifully in your browser and supports **English, Marathi, and Hindi**
 
 ---
 
-## 💡 What are its benefits? (फायदे)
+## 💡 What are its benefits?
 
 - **Early Detection of Problems:** Identify issues like depression, isolation, or high exam anxiety before they cause academic failure or serious mental health crises.
 - **Data-Driven (Not Guesswork):** Uses real Data Science and ML to connect sleep habits, phone usage, and grades, giving a clear picture (e.g. "Low sleep + 5hrs phone = High Anxiety").
-- **Language is no Barrier:** Because it supports Hindi and Marathi, students from rural areas (ग्रामीण भाग) or regional schools can answer honestly without worrying about English fluency.
+- **Language is no Barrier:** Because it supports Hindi and Marathi, students from rural areas or regional schools can answer honestly without worrying about English fluency.
 - **Privacy First, Actionable Output:** Generates reports that don't just dump numbers, but actually tell parents and teachers *what to do next*.
 
 ---
