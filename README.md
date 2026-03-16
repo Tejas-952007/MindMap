@@ -1,262 +1,346 @@
-# 🧠 MindMap / Student Psychological Health Assessment
+<div align="center">
 
-MindMap is an **AI-powered web application** designed to evaluate and understand the psychological health of students. Built using Streamlit and Machine Learning, it assesses student stress, anxiety, and motivation based on their daily routines and behaviors, and provides intelligent insights.
+# 🧠 MindMap
+### *AI-Powered Student Psychological Health Assessment*
+
+<img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+<img src="https://img.shields.io/badge/Streamlit-1.32%2B-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white"/>
+<img src="https://img.shields.io/badge/scikit--learn-ML-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white"/>
+<img src="https://img.shields.io/badge/XGBoost-2.0%2B-006600?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"/>
+
+<br/>
+
+<img src="https://img.shields.io/badge/Language-English%20%7C%20%E0%A4%AE%E0%A4%B0%E0%A4%BE%E0%A4%A0%E0%A5%80%20%7C%20%E0%A4%B9%E0%A4%BF%E0%A4%82%E0%A4%A6%E0%A5%80-blueviolet?style=flat-square"/>
+<img src="https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F%20in%20Pune-orange?style=flat-square"/>
+<img src="https://img.shields.io/github/stars/Tejas-952007/MindMap?style=flat-square&color=yellow"/>
+<img src="https://img.shields.io/github/forks/Tejas-952007/MindMap?style=flat-square&color=blue"/>
+
+<br/><br/>
+
+> **MindMap** is an AI-powered web app that evaluates the **psychological health of students** using Machine Learning.  
+> It assesses **stress, anxiety, motivation, and social isolation** — then delivers actionable insights for Students, Parents & Teachers.
+
+<br/>
+
+![Home Dashboard](./assets/home.png)
+
+</div>
 
 ---
 
 ## 📚 Table of Contents
-1. [What is MindMap?](#-what-is-mindmap)
-2. [Where can this be used? (Use Cases)](#-where-can-this-be-used-use-cases)
-3. [What are its benefits?](#-what-are-its-benefits)
-4. [What's New — Key Features](#-whats-new--key-features)
-5. [Project Architecture](#%EF%B8%8F-project-architecture)
-6. [How the App Works — Flowcharts](#-how-the-app-works--flowcharts)
-7. [Screenshots & Example PDF](#-screenshots--example-pdf-report)
-8. [What Algorithms Does it Use?](#-what-algorithms-does-it-use)
-8. [Using the Dashboards](#-using-the-dashboards)
-9. [Tech Stack](#%EF%B8%8F-tech-stack)
-10. [Getting Started (Beginner Friendly)](#-getting-started-beginner-friendly)
-11. [Project File Structure](#-project-file-structure)
+
+| # | Section |
+|---|---------|
+| 1 | [🤔 What is MindMap?](#-what-is-mindmap) |
+| 2 | [🎯 Use Cases](#-use-cases) |
+| 3 | [✨ Key Features](#-key-features) |
+| 4 | [🧠 ML Algorithms Used](#-ml-algorithms-used) |
+| 5 | [🏗️ Project Architecture](#️-project-architecture) |
+| 6 | [🔄 App Flowcharts](#-app-flowcharts) |
+| 7 | [📸 Screenshots](#-screenshots) |
+| 8 | [📈 Using the Dashboards](#-using-the-dashboards) |
+| 9 | [🛠️ Tech Stack](#️-tech-stack) |
+| 10 | [🚀 Getting Started](#-getting-started) |
+| 11 | [📁 Project Structure](#-project-structure) |
+| 12 | [👥 Contributors](#-project-contributors) |
 
 ---
 
 ## 🤔 What is MindMap?
-College life can be tough. Students often face anxiety, academic pressure, and social isolation. **MindMap** is an initial screening tool that helps identify these issues early.
 
-Instead of a boring form, it acts as an intelligent assistant:
-> 📝 *Student answers simple questions about sleep, study habits, and mood.*  
-> 🤖 *MindMap processes this using Machine Learning.*  
-> 📊 *It instantly generates scores for Stress, Anxiety, Motivation, and Overall Health.*
+College life can be overwhelming. Students face **anxiety, academic pressure, and social isolation** — often silently.
 
-It runs beautifully in your browser and supports **English, Marathi, and Hindi**, making it accessible to a wider audience!
+**MindMap** is an early-screening AI tool that detects these issues before they escalate.
 
----
+Instead of a boring survey form, it works like an intelligent assistant:
 
-## 🎯 Where can this be used? (Use Cases)
+```
+📝 Student answers simple questions about sleep, study habits, and mood
+        ↓
+🤖 MindMap processes the data using Machine Learning (K-Means + XGBoost)
+        ↓
+📊 Instantly generates Stress, Anxiety, Motivation & Overall Health scores
+        ↓
+📄 Generates a downloadable PDF report with actionable recommendations
+```
 
-1. **🏫 Schools and Colleges:**
-   - To monitor the overall mental health of students in a class or college without making them feel uncomfortable.
-   - Teachers can identify students who are "At-Risk" due to high academic stress or social isolation and provide counseling.
-2. **👨‍👩‍👧 Parents at Home:**
-   - Instead of asking, "Why are your marks low?" parents can use this to understand if screen time, poor sleep, or anxiety is the real issue.
-3. **👩‍⚕️ Student Counselors:**
-   - As an initial survey tool before actual therapy sessions to save time and immediately understand what's troubling the student.
-4. **🧠 Self-Assessment for Students:**
-   - Whenever a student feels lost or unmotivated, they can take this test to see their personal "Archetype" and get automated actionable suggestions.
+🌍 Supports **English**, **मराठी (Marathi)**, and **हिंदी (Hindi)** — making it accessible to rural and regional students!
 
 ---
 
-## 💡 What are its benefits?
+## 🎯 Use Cases
 
-- **Early Detection of Problems:** Identify issues like depression, isolation, or high exam anxiety before they cause academic failure or serious mental health crises.
-- **Data-Driven (Not Guesswork):** Uses real Data Science and ML to connect sleep habits, phone usage, and grades, giving a clear picture (e.g. "Low sleep + 5hrs phone = High Anxiety").
-- **Language is no Barrier:** Because it supports Hindi and Marathi, students from rural areas or regional schools can answer honestly without worrying about English fluency.
-- **Privacy First, Actionable Output:** Generates reports that don't just dump numbers, but actually tell parents and teachers *what to do next*.
+| 👤 Who | 🎯 How They Use It |
+|--------|-------------------|
+| 🏫 **Schools & Colleges** | Monitor mental health across a class; identify At-Risk students for counseling |
+| 👨‍👩‍👧 **Parents** | Understand if screen time, poor sleep, or anxiety is affecting their child's grades |
+| 👩‍⚕️ **Student Counselors** | Use as a pre-therapy screening tool to save time and get immediate insights |
+| 🧠 **Students (Self-Assessment)** | Understand their own "Archetype" and get automated, personalized suggestions |
 
 ---
 
-## ✨ What's New — Key Features
+## ✨ Key Features
 
-1. **🌍 Multilingual Interface**
-   - Seamlessly switch between **English**, **मराठी (Marathi)**, and **हिंदी (Hindi)**.
-   - All questions, reports, and insights are fully translated.
+### 🌍 1. Multilingual Interface
+Switch seamlessly between **English**, **मराठी**, and **हिंदी**.  
+All questions, results, and PDF reports are fully translated — no language barrier!
 
-2. **🤖 Machine Learning Driven Scoring**
-   - Uses pre-trained algorithms (K-Means, XGBoost) to predict psychological patterns.
-   - Groups students into "Archetypes" (e.g., Stressed, Balanced).
+### 🤖 2. Machine Learning Driven Scoring
+- Uses **K-Means Clustering** to classify students into Psychological Archetypes (e.g., *Balanced*, *Stressed*, *At-Risk*)
+- Pre-trained models load instantly — no waiting!
 
-3. **📊 Dynamic Result Dashboards**
-   - **Student View:** Colorful gauges and charts showing personal health scores.
-   - **Parent View:** Easy-to-understand actionable advice without confusing data.
-   - **Teacher View:** Class-level trends and academic risk flagging.
+### 📊 3. Three Dynamic Dashboards
+- **🎓 Student View** — Colorful gauges & charts: Stress, Anxiety, Motivation, Overall Health
+- **👨‍👩‍👧 Parent View** — Simple, jargon-free advice on how to support their child
+- **👨‍🏫 Teacher View** — Class-level trends and individual Academic Risk Flags
 
-4. **📄 PDF Report Generation**
-   - Downloadable, printer-friendly PDF reports containing charts and detailed analysis.
+### 📄 4. Downloadable PDF Report
+- Auto-generated, beautifully formatted PDF with charts, scores, and personalized advice
+- Printer-friendly and shareable — zero manual effort!
+
+### 🔒 5. Privacy First
+- No data is stored externally
+- All processing happens locally on the machine running the app
+
+---
+
+## 🧠 ML Algorithms Used
+
+MindMap is **not** just a web form. It uses real Machine Learning:
+
+### 1️⃣ K-Means Clustering (Unsupervised Learning)
+- Groups students into behavioral clusters (Archetypes) based on 37 features
+- Students with similar patterns (e.g., low sleep + high phone usage) are grouped together
+- Used in: `utils/preprocessor.py` → `models/kmeans_archetype.pkl`
+
+### 2️⃣ Label Encoding + Min-Max Scaling (Data Preparation)
+- Text answers like `"Often"` or `"Never"` → encoded to numbers via `LabelEncoder`
+- All values normalized to a uniform 0–1 range using `MinMaxScaler`
+- Ensures consistent, bias-free input for the ML models
+
+### 3️⃣ Mathematical Score Aggregation
+Combines weighted data points into human-readable metrics:
+```
+Stress Index    = f(Sleep Hours, Workload, Phone Hours)
+Anxiety Level   = f(Self-Doubt Score, Exam Confidence, Sleep Quality)
+Motivation Score = f(Goal Clarity, Tech Usage, Study Habit)
+Social Isolation = f(Friend Count, Social Interaction Frequency)
+Overall Health  = weighted_average(Stress, Anxiety, Motivation, Isolation)
+```
 
 ---
 
 ## 🏗️ Project Architecture
 
-*(Note: Add your actual architecture diagram image here by replacing `assets/architecture.png`)*
-
 ![MindMap Architecture Diagram](./assets/architecture.png)
 
 ### High-Level System Design
-MindMap follows a stateless, simple, yet powerful architecture:
-1. **Frontend (Streamlit UI):** Users access the app directly via the browser. Forms and dashboards are dynamically generated here.
-2. **Backend Logic:** Also managed by Python via Streamlit. Handles routing and session state.
-3. **Data Preprocessor (`utils/preprocessor.py`):** Takes raw form inputs and transforms them into scaled feature vectors.
-4. **Machine Learning Models (`models/*.pkl`):** Pre-trained models are loaded into memory to instantly predict student archetypes and warning flags.
-5. **Report Service:** Uses `fpdf2` to construct a dynamic, heavily customized PDF with Unicode support and automated layout.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                     STREAMLIT FRONTEND                  │
+│   (Browser UI · Forms · Charts · PDF Download Button)   │
+└──────────────────────────┬──────────────────────────────┘
+                           │ User Inputs
+┌──────────────────────────▼──────────────────────────────┐
+│               BACKEND LOGIC (Python / Streamlit)        │
+│         (Session State · Routing · Page Modules)        │
+└──────┬────────────────────────────────────────┬─────────┘
+       │                                        │
+┌──────▼──────────┐                   ┌─────────▼────────┐
+│  DATA PROCESSOR  │                   │   REPORT SERVICE  │
+│ preprocessor.py  │                   │  (fpdf2 + charts) │
+│ ─────────────── │                   │ ───────────────── │
+│ • Label Encoding │                   │ • Auto-layout PDF │
+│ • Min-Max Scale  │                   │ • Unicode Support │
+│ • Score Calc     │                   │ • Chart Embed     │
+└──────┬──────────┘                   └──────────────────┘
+       │
+┌──────▼──────────┐
+│   ML MODELS      │
+│  (models/*.pkl)  │
+│ ─────────────── │
+│ • K-Means        │
+│ • Archetype Tag  │
+│ • Risk Flag      │
+└──────────────────┘
+```
 
 ---
 
-## 🔄 How the App Works — Flowcharts
+## 🔄 App Flowcharts
 
 ### 1. Overall App Flow
+
 ```mermaid
 flowchart TD
     A([🚀 App Starts]) --> B{🌐 Select Language}
-    B -->|English / मराठी / हिंदी| C[🏠 View Home / Global Context]
-    C --> D[📝 Take Assessment Questionnaire]
+    B -->|English / मराठी / हिंदी| C[🏠 Home Page]
+    C --> D[📝 Take Assessment]
     
-    D --> E{User Submits Form?}
-    E -->|Yes| F[⚙️ Preprocessor: Calculate Base Scores]
+    D --> E{Submitted?}
+    E -->|Yes| F[⚙️ Preprocessor: Compute Base Scores]
     E -->|No| D
     
-    F --> G[🤖 ML Models: K-Means, XGBoost]
-    G --> H[📊 Calculate Overall Health]
+    F --> G[🤖 K-Means Model: Predict Archetype]
+    G --> H[📊 Calculate Overall Health Score]
     
-    H --> I[Dashboard Navigation]
-    I -->|Results| J[🏆 View Results Dashboard]
-    I -->|Report| K[📄 Generate PDF]
-    I -->|Parent| L[👨‍👩‍👦 View Parent Insights]
-    I -->|Teacher| M[👨‍🏫 View Teacher Analytics]
+    H --> I{Navigate To}
+    I -->|Results| J[🏆 Student Dashboard]
+    I -->|Report| K[📄 PDF Generator]
+    I -->|Parent| L[👨‍👩‍👦 Parent Insights]
+    I -->|Teacher| M[👨‍🏫 Teacher Analytics]
 ```
 
-### 2. Data Processing & Machine Learning Flow (`preprocessor.py`)
-This chart explains step-by-step how user answers are converted into the final scores and ML predictions.
+### 2. ML Data Pipeline
 
 ```mermaid
 flowchart TD
-    A([📝 Student Submits Questionnaire]) --> B{Data Split}
+    A([📝 Student Submits Form]) --> B{Data Split}
 
-    %% Mathematical Scoring Path
-    B -->|Path 1: Direct Calculations| C[🧮 Compute Base Scores]
-    C --> D(Stress Index: Sleep + Workload + Phone Hrs)
-    C --> E(Anxiety Level: Self-Doubt + Confidence)
-    C --> F(Motivation Score: Goals + Tech Usage)
-    C --> G(Social Isolation: Friends + Interaction)
-    D & E & F & G --> H[📈 Calculate Overall Health Score]
+    B -->|Path 1: Direct Math| C[🧮 Compute Base Scores]
+    C --> D(Stress: Sleep + Workload + Phone)
+    C --> E(Anxiety: Self-Doubt + Confidence)
+    C --> F(Motivation: Goals + Tech Usage)
+    C --> G(Isolation: Friends + Interaction)
+    D & E & F & G --> H[📈 Overall Health Score]
 
-    %% Machine Learning Path
-    B -->|Path 2: Machine Learning Pipeline| I[⚙️ Feature Encoding]
-    I --> J[🔡 Label Encoders: Convert Text to Numbers]
-    J --> K[⚖️ Data Scaler: Normalize all numbers]
-    K --> L[🧬 Create Numeric Feature Vector]
-    L --> M[🤖 K-Means Clustering Model]
-    M --> N[🔮 Predict Student Archetype]
+    B -->|Path 2: ML Pipeline| I[⚙️ Feature Encoding]
+    I --> J[🔡 LabelEncoder: Text → Numbers]
+    J --> K[⚖️ MinMaxScaler: Normalize]
+    K --> L[🧬 37-Feature Vector]
+    L --> M[🤖 K-Means Model]
+    M --> N[🔮 Student Archetype]
 
-    %% Synthesis
-    H --> O{📊 Final Output Displayed on UI}
+    H --> O{📊 Final Output}
     N --> O
-    O --> P([🏆 Results Dashboard & PDF Report])
+    O --> P([🏆 Dashboard + PDF Report])
 ```
 
 ---
 
-## 📸 Screenshots & Example PDF Report
+## 📸 Screenshots
 
-- **Example PDF Report:** A sample of the generated PDF report is included in this repository. You can view exactly what the final output looks like here: 👉 [Download Example PDF Report](./example_report.pdf)
-
-**1. Home Dashboard**
+**🏠 Home Dashboard**
 ![Home Dashboard](./assets/home.png)
 
-**2. Assessment Form**
+**📝 Assessment Form**
 ![Assessment Page](./assets/assessment.png)
 
-**3. Student Results Dashboard**
-![Results Dashboard](./assets/results.png) 
+**🏆 Student Results Dashboard**
+![Results Dashboard](./assets/results.png)
 
----
-
-## 🧠 What Algorithms Does it Use?
-
-MindMap is not just a standard web form; it uses **Machine Learning** algorithms to understand and predict student behaviors. 
-
-1. **K-Means Clustering (Unsupervised Learning):**
-   - **Why we used it:** To group students into clusters (Archetypes) based on similarities in their behavior (e.g., students who sleep less and use phones more are grouped together). 
-   - **How it works:** Taking a 37-feature data vector derived from the questionnaire, K-Means groups the student into one of several predefined clusters. If they match a cluster associated with high stress and low motivation, they are flagged as "At-Risk."
-   - **Where in code:** Used in `utils/preprocessor.py` via a pre-trained `kmeans_archetype.pkl` model.
-
-2. **Mathematical Normalization and Aggregation (Calculus):**
-   - **Action:** Combines data points using specific weights to formulate human-readable metrics.
-   - **Example:** `Anxiety Level` = (Self-Doubt Value + Exam Blanking Frequency + Lack of Sleep).
-   
-3. **Label Encoding and Min-Max Scaling (Data Preparation):**
-   - Before any algorithm can predict, text answers (like "Often" or "Never") are encoded into numbers using Scikit-Learn's `LabelEncoder`, and then scaled to a uniform range using `MinMaxScaler`.
+**📄 Example PDF Report**  
+👉 [Download Example PDF Report](./example_report.pdf)
 
 ---
 
 ## 📈 Using the Dashboards
 
-### For Students
-- Go to the **Assessment** tab and honestly answer the questions.
-- Once submitted, head to **Results** to see your "Overall Health Score", "Anxiety Level", and "Stress Index".
-- Click **Report** to download your personalized PDF.
+### 🎓 For Students
+1. Go to the **Assessment** tab
+2. Answer all questions honestly (takes ~3 minutes)
+3. Head to **Results** to view your scores and Archetype
+4. Click **Report** to download your personalized PDF
 
-### For Parents
-- Go to the **Parent** tab.
-- Here, you won't see complicated charts. Instead, you'll see simple, actionable advice on how to support your child based on their recent assessment.
+### 👨‍👩‍👧 For Parents
+1. Go to the **Parent** tab
+2. View simple, actionable advice (no charts or jargon!)
+3. Understand what is affecting your child and *what to do next*
 
-### For Teachers
-- Go to the **Teacher** tab.
-- Teachers can see aggregated data (trends) and identify if a student has an **"Academic Risk Flag"** indicating they might need extra attention.
+### 👨‍🏫 For Teachers
+1. Go to the **Teacher** tab
+2. View class-level mental health trends
+3. Identify students with an **🚨 Academic Risk Flag**
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend Framework:** [Streamlit](https://streamlit.io/)
-- **Data Manipulation:** `pandas`, `numpy`
-- **Machine Learning:** `scikit-learn` (K-Means, Scalers, Label Encoders), `xgboost`
-- **Data Visualization:** `plotly`, `matplotlib`, `seaborn`
-- **Tools:** `fpdf2` (for PDF generation), `joblib` (for loading models).
+| Category | Technology |
+|----------|-----------|
+| **Web Framework** | [Streamlit](https://streamlit.io/) 1.32+ |
+| **Machine Learning** | scikit-learn (K-Means, Scaler, LabelEncoder), XGBoost |
+| **Data** | pandas, numpy |
+| **Visualization** | plotly, matplotlib, seaborn |
+| **PDF Generation** | fpdf2 |
+| **Model Persistence** | joblib |
+| **Language** | Python 3.8+ |
 
 ---
 
-## 🚀 Getting Started (Beginner Friendly)
+## 🚀 Getting Started
 
-### Step 1 — You need:
-- A computer with **Python** installed (Python 3.8 or higher is recommended).
+### Prerequisites
+- Python **3.8 or higher** installed on your machine
 
-### Step 2 — Download the project
-**Option A — Download ZIP (easiest):**
-1. Go to: [MindMap GitHub Repo](https://github.com/Tejas-952007/MindMap)
-2. Click the green **"Code"** button
-3. Click **"Download ZIP"**
-4. Unzip the downloaded file
+### Option A — Download ZIP (Easiest)
+1. Click the green **`Code`** button on this page
+2. Select **`Download ZIP`**
+3. Extract the ZIP to a folder
 
-**Option B — Git clone:**
+### Option B — Git Clone
 ```bash
 git clone https://github.com/Tejas-952007/MindMap.git
 cd MindMap
 ```
 
-### Step 3 — Install Requirements
-Open your terminal (or Command Prompt) inside the folder and run:
+### Step 1 — Install Requirements
 ```bash
 pip install -r requirements.txt
 ```
 
-### Step 4 — Run the App!
-If you are running this for the very first time, generate the data and train the models:
+### Step 2 — Generate Data & Train Models
+> ⚠️ **Do this only once** on first run!
 ```bash
 python generate_data_and_train.py
 ```
 
-Then, start the web app:
+### Step 3 — Launch the App 🎉
 ```bash
 streamlit run app.py
 ```
-> The app will automatically open in your browser at `http://localhost:8501`.
+> The app opens automatically at **`http://localhost:8501`**
 
 ---
 
-## 📁 Project File Structure
+## 📁 Project Structure
 
-Here is what each file and folder does:
-
-| Folder / File | What it does |
-|--------------|--------------|
-| `app.py` | The main file that runs the Streamlit application and sidebar navigation. |
-| `page_modules/` | Contains the code for different pages (Home, Assessment, Results, Parent View, etc.). |
-| `models/` | Stores the trained Machine Learning models (`.pkl` files) generated by Python. |
-| `utils/` | Helper files, like `preprocessor.py` for data calculations and translations. |
-| `data/` | Where generated dummy dataset files are stored. |
-| `assets/` | Stores the CSS styling files (colors, layout) and images. |
-| `generate_data_and_train.py` | The script that generates dummy data and trains the ML models before you start the app. |
-| `requirements.txt` | The list of all Python packages needed to run this project. |
+```
+MindMap/
+│
+├── 📄 app.py                        # Main Streamlit app — routing & sidebar
+├── 📄 generate_data_and_train.py    # Generates dummy data & trains ML models
+├── 📄 requirements.txt              # All Python dependencies
+├── 📄 example_report.pdf            # Sample generated PDF report
+│
+├── 📂 page_modules/                 # Individual page logic
+│   ├── page_01_information.py       # Home / Info page
+│   ├── page_02_global_context.py    # Global mental health context
+│   ├── page_03_assessment.py        # Student questionnaire form
+│   ├── page_04_results.py           # Results & score dashboard
+│   ├── page_05_report.py            # PDF report generator
+│   ├── page_06_parent_view.py       # Parent insights page
+│   └── page_07_teacher_view.py      # Teacher analytics page
+│
+├── 📂 utils/                        # Helper utilities
+│   ├── preprocessor.py              # Data processing & ML scoring engine
+│   └── translations.py              # English / मराठी / हिंदी translations
+│
+├── 📂 models/                       # Pre-trained ML model files (.pkl)
+│   └── kmeans_archetype.pkl         # K-Means clustering model
+│
+├── 📂 data/                         # Generated training dataset (CSV)
+│
+└── 📂 assets/                       # UI assets
+    ├── style.css                    # Custom Streamlit CSS theme
+    ├── home.png                     # Screenshot — Home page
+    ├── assessment.png               # Screenshot — Assessment form
+    ├── results.png                  # Screenshot — Results dashboard
+    └── architecture.png             # System architecture diagram
+```
 
 ---
 
@@ -267,4 +351,22 @@ Here is what each file and folder does:
 
 ---
 
-**Disclaimer:** MindMap is an educational screening tool and *not a clinical diagnostic device*. It provides insights to help students, parents, and teachers take timely actions. Severe cases should always consult mental health professionals.
+<div align="center">
+
+## 🤝 Contributing
+
+Pull requests are welcome! For major changes, please open an issue first.  
+If this project helped you, please ⭐ **star the repo** — it means a lot!
+
+---
+
+**⚠️ Disclaimer**  
+MindMap is an **educational screening tool**, *not a clinical diagnostic device*.  
+It provides insights to help students, parents, and teachers take timely action.  
+Severe cases should always consult qualified mental health professionals.
+
+---
+
+Made with ❤️ by **[Tejas](https://github.com/Tejas-952007)** | Pune, Maharashtra 🇮🇳
+
+</div>
