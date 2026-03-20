@@ -369,44 +369,47 @@ def show(lang: str = "en"):
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ── Profile-specific advice ───────────────────────────────
-    st.markdown('<div class="mm-section-title">🎯 Personalised Advice for Your Child</div>',
-                unsafe_allow_html=True)
+    if submitted and scores:
+        st.markdown('<div class="mm-section-title">🎯 Personalised Advice for Your Child</div>',
+                    unsafe_allow_html=True)
 
-    at_risk = st.session_state.predictions.get("at_risk_flag", 0)
-    lm = st.session_state.recs.get("learning_mode", "Hybrid")
-    archetype = st.session_state.recs.get("archetype_name", "")
-    strengths = st.session_state.recs.get("strengths", [])
-    areas = st.session_state.recs.get("areas_to_improve", [])
+        preds = st.session_state.get("predictions", {})
+        recs  = st.session_state.get("recs", {})
+        at_risk = preds.get("at_risk_flag", 0)
+        lm = recs.get("learning_mode", "Hybrid")
+        archetype = recs.get("archetype_name", "")
+        strengths = recs.get("strengths", [])
+        areas = recs.get("areas_to_improve", [])
 
-    st.markdown(f"""
-    <div class="mm-card">
-        <div style="font-size:0.9rem;line-height:1.8;color:#CBD5E1;">
-        Based on {name}'s assessment:<br><br>
-        🎓 <strong style="color:#A5B4FC;">Ideal learning mode:</strong> {lm} — 
-        {"Support their need for structure and face-to-face interaction. Ensure they attend classes regularly." if lm=="Offline" else
-         "Support their self-paced digital learning. Ensure they have a quiet, dedicated study space at home." if lm=="Online" else
-         "Support both online and offline learning. Don't push them toward just one mode."}<br><br>
-        🧠 <strong style="color:#A5B4FC;">Archetype:</strong> {archetype} — 
-        {"They likely put immense pressure on themselves. Your role is to give them PERMISSION to rest." if "Achiever" in archetype else
-         "They need help finding their 'why'. Discuss their interests, not just their marks." if "Drifter" in archetype else
-         "They need gentle confidence-building. Praise small wins loudly and publicly." if "Struggler" in archetype else
-         "They thrive with social connection. Help them organise study groups at home." if "Social" in archetype else
-         "They're digitally independent. Trust their online learning, just monitor screen time." if "Digital" in archetype else
-         "They're generally balanced. Keep supporting their routine."}<br><br>
-        💪 <strong style="color:#10B981;">Their strengths</strong> (celebrate these!): {', '.join(strengths)}<br>
-        🌱 <strong style="color:#F59E0B;">Where they need support:</strong> {', '.join(areas)}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    if at_risk:
-        st.markdown("""
-        <div class="risk-alert" style="margin-top:12px;">
-        🤝 <strong>Special note for you:</strong> Your child's profile has some early warning indicators.
-        Please schedule a calm, one-on-one conversation this week — not about studies, just about them.
-        A college counsellor appointment would also be very beneficial within the next 2 weeks.
+        st.markdown(f"""
+        <div class="mm-card">
+            <div style="font-size:0.9rem;line-height:1.8;color:#CBD5E1;">
+            Based on {name}'s assessment:<br><br>
+            🎓 <strong style="color:#A5B4FC;">Ideal learning mode:</strong> {lm} —
+            {"Support their need for structure and face-to-face interaction. Ensure they attend classes regularly." if lm=="Offline" else
+             "Support their self-paced digital learning. Ensure they have a quiet, dedicated study space at home." if lm=="Online" else
+             "Support both online and offline learning. Don't push them toward just one mode."}<br><br>
+            🧠 <strong style="color:#A5B4FC;">Archetype:</strong> {archetype} —
+            {"They likely put immense pressure on themselves. Your role is to give them PERMISSION to rest." if "Achiever" in archetype else
+             "They need help finding their 'why'. Discuss their interests, not just their marks." if "Drifter" in archetype else
+             "They need gentle confidence-building. Praise small wins loudly and publicly." if "Struggler" in archetype else
+             "They thrive with social connection. Help them organise study groups at home." if "Social" in archetype else
+             "They're digitally independent. Trust their online learning, just monitor screen time." if "Digital" in archetype else
+             "They're generally balanced. Keep supporting their routine."}<br><br>
+            💪 <strong style="color:#10B981;">Their strengths</strong> (celebrate these!): {', '.join(strengths)}<br>
+            🌱 <strong style="color:#F59E0B;">Where they need support:</strong> {', '.join(areas)}
+            </div>
         </div>
         """, unsafe_allow_html=True)
+
+        if at_risk:
+            st.markdown("""
+            <div class="risk-alert" style="margin-top:12px;">
+            🤝 <strong>Special note for you:</strong> Your child's profile has some early warning indicators.
+            Please schedule a calm, one-on-one conversation this week — not about studies, just about them.
+            A college counsellor appointment would also be very beneficial within the next 2 weeks.
+            </div>
+            """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -450,21 +453,60 @@ def show(lang: str = "en"):
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # PDF Download
-    if st.button("⬇️ Download Parent Guide as PDF", key="parent_pdf_btn", use_container_width=True):
-        with st.spinner("Generating PDF..."):
-            try:
-                from utils.recommender import generate_parent_report
-                from utils.report_generator import generate_pdf
-                parent_text = generate_parent_report(ans, scores)
-                pdf_path = generate_pdf(parent_text, "/tmp/parent_guide.pdf")
-                with open(pdf_path, "rb") as f:
-                    st.download_button(
-                        "⬇️ Click to Download Parent Guide PDF",
-                        data=f.read(),
-                        file_name=f"{name.replace(' ','_')}_parent_guide.pdf",
-                        mime="application/pdf",
-                        use_container_width=True,
-                    )
-            except Exception as e:
-                st.error(f"PDF error: {e}")
+    # ── Download Parent Guide ─────────────────────────────────
+    if submitted and scores:
+        _sl = "high" if scores.get("stress_index", 0.5) > 0.6 else \
+              "moderate" if scores.get("stress_index", 0.5) > 0.35 else "low"
+        _overall = scores.get("overall_health", 70)
+
+        _warnings = []
+        if scores.get("stress_index", 0) > 0.65:
+            _warnings.append("Frequently appearing tired, withdrawn, or irritable")
+        if scores.get("anxiety_level", 0) > 65:
+            _warnings.append("Difficulty sleeping or waking up with worries")
+        if scores.get("social_isolation", 0) > 6:
+            _warnings.append("Spending increasing time alone")
+        if scores.get("motivation_score", 50) < 35:
+            _warnings.append("Losing interest in activities they previously enjoyed")
+        if not _warnings:
+            _warnings.append("No major warning signs detected at this time")
+
+        parent_guide_text = f"""PARENT GUIDE - UNDERSTANDING YOUR CHILD
+Student: {name}
+======================================================
+
+HOW YOUR CHILD IS DOING
+------------------------------------------------------
+{name} is currently experiencing {_sl} stress levels.
+Overall wellbeing score: {_overall}/100.
+
+WHAT YOU CAN DO
+------------------------------------------------------
+SAY:
+  - "I'm proud of your effort, not just your grades."
+  - "Is there anything I can do to make things easier?"
+  - "It's okay to take breaks - rest is part of success."
+
+DON'T SAY:
+  - Don't compare them to siblings or classmates.
+  - Avoid asking about exam results immediately.
+  - Don't make study the only dinner conversation topic.
+
+WARNING SIGNS
+------------------------------------------------------
+{chr(10).join('  ! ' + w for w in _warnings)}
+
+HELPLINES
+------------------------------------------------------
+  - iCall (TISS): 9152987821 (Mon-Sat, 8AM-10PM)
+  - Vandrevala Foundation: 1860-2662-345 (24/7)
+""".strip()
+
+        st.download_button(
+            "⬇️ Download Parent Guide",
+            data=parent_guide_text,
+            file_name=f"{name.replace(' ', '_')}_parent_guide.txt",
+            mime="text/plain",
+            use_container_width=True,
+            key="dl_parent_guide_txt",
+        )

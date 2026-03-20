@@ -1,13 +1,28 @@
-"""Page 3 – Student Assessment Questionnaire (33 questions across 5 sections)"""
+"""Page 3 – Student Assessment Questionnaire (33 questions across 5 sections)
+    Step-by-step wizard: each section has a Next button to proceed."""
 import streamlit as st
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from utils.translations import t
 
+SECTION_NAMES = {
+    "en": ["👤 About You", "📚 Study Habits", "🌙 Daily Life", "🎮 Activities", "🚀 Future & Submit"],
+    "mr": ["👤 तुमच्याबद्दल", "📚 अभ्यासाच्या सवयी", "🌙 दैनंदिन जीवन", "🎮 उपक्रम", "🚀 भविष्य आणि सबमिट"],
+    "hi": ["👤 आपके बारे में", "📚 अध्ययन की आदतें", "🌙 दैनिक जीवन", "🎮 गतिविधियाँ", "🚀 भविष्य और सबमिट"],
+}
+
 
 def show(lang: str = "en"):
+    # Init current section in session state
+    if "current_section" not in st.session_state:
+        st.session_state.current_section = 0
+
+    sec = st.session_state.current_section
+    sec_names = SECTION_NAMES.get(lang, SECTION_NAMES["en"])
+
+    # ── Page Header ────────────────────────────────────────────
     st.markdown(f"""
-    <div style="text-align:center; margin-bottom:24px;">
+    <div style="text-align:center; margin-bottom:20px;">
         <h2 style="font-family:'Space Grotesk',sans-serif; color:#A5B4FC; margin:0;">
             {t('assessment_title', lang)}
         </h2>
@@ -17,6 +32,32 @@ def show(lang: str = "en"):
     </div>
     """, unsafe_allow_html=True)
 
+    # ── Progress Bar ───────────────────────────────────────────
+    progress = (sec + 1) / 5
+    st.progress(progress)
+
+    # Step indicators
+    step_parts = []
+    for i, sname in enumerate(sec_names):
+        if i < sec:
+            color, bg, border, icon = "#10B981", "rgba(16,185,129,0.15)", "rgba(16,185,129,0.4)", "✅"
+        elif i == sec:
+            color, bg, border = "#A5B4FC", "rgba(79,70,229,0.15)", "rgba(99,102,241,0.5)"
+            icon = f"<strong>{i+1}</strong>"
+        else:
+            color, bg, border, icon = "#475569", "rgba(255,255,255,0.03)", "rgba(255,255,255,0.08)", str(i+1)
+
+        step_parts.append(
+            f'<div style="display:inline-flex;align-items:center;gap:6px;background:{bg};border:1px solid {border};border-radius:30px;padding:6px 14px;font-size:0.78rem;color:{color};margin:3px;">'
+            f'<span style="font-size:0.75rem;">{icon}</span><span>{sname}</span></div>'
+        )
+
+    steps_row = "".join(step_parts)
+    st.markdown(
+        f'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-bottom:20px;">{steps_row}</div>',
+        unsafe_allow_html=True,
+    )
+
     # Disclaimer
     st.markdown(f"""
     <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);
@@ -25,19 +66,16 @@ def show(lang: str = "en"):
     </div>
     """, unsafe_allow_html=True)
 
-    # Progress tracker
-    tabs = st.tabs([t("tab_about", lang), t("tab_study", lang), t("tab_daily", lang),
-                    t("tab_activity", lang), t("tab_future", lang)])
-
-    # ── Section A: About You ──────────────────────────────────
-    with tabs[0]:
+    # ── Section 0: About You ──────────────────────────────────
+    if sec == 0:
         st.markdown(f"#### {t('about_you_header', lang)}")
         st.markdown("<br>", unsafe_allow_html=True)
 
         c1, c2 = st.columns(2)
         with c1:
-            name = st.text_input(f"1. {t('q_name', lang)}", value=st.session_state.answers.get("name", ""),
-                                 placeholder=t('q_name_ph', lang), key="q_name")
+            name_val = st.text_input(f"1. {t('q_name', lang)}",
+                                     value=st.session_state.answers.get("name", ""),
+                                     placeholder=t('q_name_ph', lang), key="q_name")
         with c2:
             _g_opts = [t("opt_male",lang), t("opt_female",lang), t("opt_other",lang), t("opt_prefer_not",lang)]
             _g_orig = ["Male", "Female", "Other", "Prefer not to say"]
@@ -75,10 +113,34 @@ def show(lang: str = "en"):
                                          key="q_fin")
 
         st.markdown(f'<div style="color:#64748B;font-size:0.8rem;margin-top:12px;">{t("privacy_small", lang)}</div>',
-        unsafe_allow_html=True)
+                    unsafe_allow_html=True)
 
-    # ── Section B: Study Habits ───────────────────────────────
-    with tabs[1]:
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # Save + Next button
+        _next = {"en": "Next: Study Habits →", "mr": "पुढील: अभ्यासाच्या सवयी →", "hi": "अगला: अध्ययन की आदतें →"}
+        col_b = st.columns([1, 2, 1])
+        with col_b[1]:
+            if st.button(_next.get(lang, _next["en"]), key="next_0", use_container_width=True):
+                # Save About You answers
+                st.session_state.answers["name"] = name_val.strip() if name_val else ""
+                st.session_state.answers["gender"] = gender
+                st.session_state.answers["education_level"] = edu_level
+                st.session_state.answers["branch"] = branch
+                st.session_state.answers["living_situation"] = living
+                st.session_state.answers["financial_stress"] = financial
+
+                if not st.session_state.answers["name"]:
+                    _err = {"en": "Please enter your name before proceeding.",
+                            "mr": "कृपया पुढे जाण्यापूर्वी तुमचे नाव टाका.",
+                            "hi": "कृपया आगे बढ़ने से पहले अपना नाम दर्ज करें."}
+                    st.error(_err.get(lang, _err["en"]))
+                else:
+                    st.session_state.current_section = 1
+                    st.rerun()
+
+    # ── Section 1: Study Habits ───────────────────────────────
+    elif sec == 1:
         st.markdown(f"#### {t('study_header', lang)}")
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -120,7 +182,7 @@ def show(lang: str = "en"):
 
         st.markdown("**8. When you explain a topic to a friend, how comfortable do you feel?**")
         conf_emojis = ["😰 Very nervous", "😟 A bit unsure", "😐 Neutral", "🙂 Comfortable", "😄 Very confident"]
-        confidence = st.select_slider("", options=conf_emojis,
+        confidence = st.select_slider("Confidence level", options=conf_emojis,
                                       value=st.session_state.answers.get("confidence_label",
                                                                           conf_emojis[2]),
                                       key="q_conf", label_visibility="collapsed")
@@ -137,10 +199,10 @@ def show(lang: str = "en"):
             st.markdown("**9b. When you hear a lecture, how engaged do you feel?**")
             engage_emojis = ["😴 Very distracted", "😑 Mostly distracted", "😐 Sometimes focused",
                              "🙂 Usually engaged", "🤩 Fully engaged"]
-            engagement = st.select_slider("", options=engage_emojis,
+            engagement = st.select_slider("Engagement level", options=engage_emojis,
                                           value=st.session_state.answers.get("engagement_label",
                                                                               engage_emojis[2]),
-                                          key="q_engage")
+                                          key="q_engage", label_visibility="collapsed")
             engage_val = engage_emojis.index(engagement) + 1
 
         st.markdown("**10. What makes you sit and study even when you don't feel like it?**")
@@ -171,8 +233,38 @@ def show(lang: str = "en"):
                                                                                         env_opts[2])),
                                      key="q_env")
 
-    # ── Section C+D: Daily Life ───────────────────────────────
-    with tabs[2]:
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # Nav buttons
+        col_nav = st.columns([1, 1, 1])
+        with col_nav[0]:
+            _back = {"en": "← Back", "mr": "← मागे", "hi": "← पीछे"}
+            if st.button(_back.get(lang, _back["en"]), key="back_1", use_container_width=True):
+                st.session_state.current_section = 0
+                st.rerun()
+        with col_nav[2]:
+            _next = {"en": "Next: Daily Life →", "mr": "पुढील: दैनंदिन जीवन →", "hi": "अगला: दैनिक जीवन →"}
+            if st.button(_next.get(lang, _next["en"]), key="next_1", use_container_width=True):
+                # Save study habits
+                st.session_state.answers["study_hours"] = study_hours
+                st.session_state.answers["attend_hours"] = attend_hours
+                st.session_state.answers["study_methods"] = study_methods
+                st.session_state.answers["sgpa"] = float(sgpa)
+                st.session_state.answers["atkt"] = 1 if atkt == "Yes" else 0
+                st.session_state.answers["friends_count"] = int(friends_count)
+                st.session_state.answers["confidence"] = conf_val
+                st.session_state.answers["confidence_label"] = confidence
+                st.session_state.answers["engagement"] = engage_val
+                st.session_state.answers["engagement_label"] = engagement
+                st.session_state.answers["note_style"] = note_style
+                st.session_state.answers["motivators"] = motivators
+                st.session_state.answers["goal_setting_freq"] = goal_freq
+                st.session_state.answers["study_env"] = study_env
+                st.session_state.current_section = 2
+                st.rerun()
+
+    # ── Section 2: Daily Life ─────────────────────────────────
+    elif sec == 2:
         st.markdown(f"#### {t('daily_header', lang)}")
         st.markdown("""<div style="color:#64748B;font-size:0.83rem;margin-bottom:16px;">
         💡 These questions help us understand your energy levels and daily patterns.</div>""",
@@ -189,10 +281,10 @@ def show(lang: str = "en"):
         st.markdown("**11. How often do you have difficulty falling asleep because your mind is too active?**")
         sleep_race_opts = ["Never", "Sometimes", "Often", "Always"]
         sleep_race_emojis = ["😴 Never", "🤔 Sometimes", "😟 Often", "😰 Always"]
-        sleep_race = st.select_slider("",
+        sleep_race = st.select_slider("Sleep difficulty",
                                       options=sleep_race_emojis,
                                       value=st.session_state.answers.get("sleep_racing_label","🤔 Sometimes"),
-                                      key="q_sleep_race")
+                                      key="q_sleep_race", label_visibility="collapsed")
         sleep_race_val = sleep_race_emojis.index(sleep_race)
         sleep_race_text = sleep_race_opts[sleep_race_val]
 
@@ -216,11 +308,11 @@ def show(lang: str = "en"):
         st.markdown("**12b. When you have many tasks at once, how do you typically feel?**")
         overwhelm_emojis = ["😌 Calm & organised", "🙂 Slightly pressured",
                             "😤 Quite stressed", "😰 Very overwhelmed", "🤯 Completely overwhelmed"]
-        overwhelm = st.select_slider("",
+        overwhelm = st.select_slider("Overwhelm level",
                                      options=overwhelm_emojis,
                                      value=st.session_state.answers.get("overwhelm_label",
                                                                          overwhelm_emojis[1]),
-                                     key="q_overwhelm")
+                                     key="q_overwhelm", label_visibility="collapsed")
         overwhelm_val = overwhelm_emojis.index(overwhelm) + 1
 
         c15, c16 = st.columns(2)
@@ -250,11 +342,11 @@ def show(lang: str = "en"):
         with c17:
             st.markdown("**13b. Do you feel you have enough time in a day to do what you want?**")
             time_emojis = ["😩 Never enough", "😟 Rarely", "😐 Sometimes", "🙂 Usually", "😄 Always enough"]
-            time_enough = st.select_slider("",
+            time_enough = st.select_slider("Time sufficiency",
                                            options=time_emojis,
                                            value=st.session_state.answers.get("time_enough_label",
                                                                                time_emojis[2]),
-                                           key="q_time")
+                                           key="q_time", label_visibility="collapsed")
             time_val = time_emojis.index(time_enough) + 1
 
         with c18:
@@ -268,8 +360,39 @@ def show(lang: str = "en"):
                                        key="q_social_freq")
             social_freq_val = social_freq_opts.index(social_freq) + 1
 
-    # ── Section E: Activities ─────────────────────────────────
-    with tabs[3]:
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        col_nav = st.columns([1, 1, 1])
+        with col_nav[0]:
+            _back = {"en": "← Back", "mr": "← मागे", "hi": "← पीछे"}
+            if st.button(_back.get(lang, _back["en"]), key="back_2", use_container_width=True):
+                st.session_state.current_section = 1
+                st.rerun()
+        with col_nav[2]:
+            _next = {"en": "Next: Activities →", "mr": "पुढील: उपक्रम →", "hi": "अगला: गतिविधियाँ →"}
+            if st.button(_next.get(lang, _next["en"]), key="next_2", use_container_width=True):
+                st.session_state.answers["sleep_hours"] = sleep_hours
+                st.session_state.answers["phone_hours"] = phone_hours
+                st.session_state.answers["sleep_racing"] = sleep_race_text
+                st.session_state.answers["sleep_racing_label"] = sleep_race
+                st.session_state.answers["exam_blank"] = 1 if "Blank" in exam_feel else 0
+                st.session_state.answers["friday_mood"] = friday_opts[friday_idx]
+                st.session_state.answers["friday_label"] = friday_mood
+                st.session_state.answers["overwhelm"] = overwhelm_val
+                st.session_state.answers["overwhelm_label"] = overwhelm
+                st.session_state.answers["self_doubt"] = self_doubt_opts[self_doubt_idx]
+                st.session_state.answers["self_doubt_label"] = self_doubt
+                st.session_state.answers["workload_freq"] = workload_idx
+                st.session_state.answers["workload_label"] = workload_freq
+                st.session_state.answers["time_enough"] = time_val
+                st.session_state.answers["time_enough_label"] = time_enough
+                st.session_state.answers["social_interaction_freq"] = social_freq_val
+                st.session_state.answers["social_freq"] = social_freq
+                st.session_state.current_section = 3
+                st.rerun()
+
+    # ── Section 3: Activities ─────────────────────────────────
+    elif sec == 3:
         st.markdown(f"#### {t('activity_header', lang)}")
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -291,11 +414,11 @@ def show(lang: str = "en"):
         with c22:
             st.markdown("**31. How much do you enjoy solving puzzles or brain games?**")
             puzzle_emojis = ["😑 Not at all", "🙁 Not much", "😐 Neutral", "🙂 Enjoy it", "🤩 Love it!"]
-            puzzle = st.select_slider("",
+            puzzle = st.select_slider("Puzzle enjoyment",
                                       options=puzzle_emojis,
                                       value=st.session_state.answers.get("puzzle_label",
                                                                           puzzle_emojis[2]),
-                                      key="q_puzzle")
+                                      key="q_puzzle", label_visibility="collapsed")
             puzzle_val = puzzle_emojis.index(puzzle) + 1
 
         st.markdown("**24. Which EdTech platforms do you use?** *(Select all that apply)*")
@@ -333,8 +456,32 @@ def show(lang: str = "en"):
                 if st.checkbox(ex, value=(ex in saved_extra), key=f"ext_{i}"):
                     extra_selected.append(ex)
 
-    # ── Section F: Future ─────────────────────────────────────
-    with tabs[4]:
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        col_nav = st.columns([1, 1, 1])
+        with col_nav[0]:
+            _back = {"en": "← Back", "mr": "← मागे", "hi": "← पीछे"}
+            if st.button(_back.get(lang, _back["en"]), key="back_3", use_container_width=True):
+                st.session_state.current_section = 2
+                st.rerun()
+        with col_nav[2]:
+            _next = {"en": "Next: Future & Submit →", "mr": "पुढील: भविष्य आणि सबमिट →", "hi": "अगला: भविष्य और सबमिट →"}
+            if st.button(_next.get(lang, _next["en"]), key="next_3", use_container_width=True):
+                st.session_state.answers["has_internship"] = 1 if internship == "Yes" else 0
+                st.session_state.answers["has_job"] = 1 if part_job == "Yes" else 0
+                st.session_state.answers["in_club"] = 1 if club == "Yes" else 0
+                st.session_state.answers["puzzle_score"] = puzzle_val
+                st.session_state.answers["puzzle_label"] = puzzle
+                st.session_state.answers["edtech_list"] = edtech_selected
+                st.session_state.answers["edtech_platforms"] = max(1, len([e for e in edtech_selected if e != "None"]))
+                st.session_state.answers["hobbies"] = hobbies_selected
+                st.session_state.answers["hobbies_count"] = len(hobbies_selected)
+                st.session_state.answers["extra_activities"] = extra_selected
+                st.session_state.current_section = 4
+                st.rerun()
+
+    # ── Section 4: Future & Submit ────────────────────────────
+    elif sec == 4:
         st.markdown(f"#### {t('future_header', lang)}")
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -364,142 +511,106 @@ def show(lang: str = "en"):
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        if st.button(t("submit_btn", lang), key="submit_btn", use_container_width=True):
-            # Validate
-            if not name.strip():
-                _err = {"en": "Please enter your name before submitting.",
-                        "mr": "कृपया सबमिट करण्यापूर्वी तुमचे नाव टाका.",
-                        "hi": "कृपया सबमिट करने से पहले अपना नाम दर्ज करें."}
-                st.error(_err.get(lang, _err["en"]))
-                return
+        col_nav = st.columns([1, 1, 1])
+        with col_nav[0]:
+            _back = {"en": "← Back", "mr": "← मागे", "hi": "← पीछे"}
+            if st.button(_back.get(lang, _back["en"]), key="back_4", use_container_width=True):
+                st.session_state.current_section = 3
+                st.rerun()
+        with col_nav[2]:
+            if st.button(t("submit_btn", lang), key="submit_btn", use_container_width=True):
+                # Final validation
+                name = st.session_state.answers.get("name", "")
+                if not name.strip():
+                    _err = {"en": "Please go back to 'About You' and enter your name.",
+                            "mr": "कृपया 'तुमच्याबद्दल' वर जा आणि तुमचे नाव टाका.",
+                            "hi": "कृपया 'आपके बारे में' पर जाएं और अपना नाम दर्ज करें."}
+                    st.error(_err.get(lang, _err["en"]))
+                    return
 
-            # Assemble answers
-            raw = {
-                "name": name.strip(),
-                "gender": gender,
-                "student_type": _edu_to_type(edu_level),
-                "education_level": edu_level,
-                "branch": branch or "General",
-                "study_hours": study_hours,
-                "attend_hours": attend_hours,
-                "study_methods": study_methods,
-                "prefers_online_video": "Online Videos (YouTube etc.)" in study_methods,
-                "active_learner": any(m in study_methods for m in
-                                      ["Notes (handwritten)", "Flashcards / Revision Cards"]),
-                "sgpa": float(sgpa),
-                "atkt": 1 if atkt == "Yes" else 0,
-                "friends_count": int(friends_count),
-                "confidence": conf_val,
-                "confidence_label": confidence,
-                "engagement": engage_val,
-                "engagement_label": engagement,
-                "note_style": note_style,
-                "motivators": motivators,
-                "goal_setting_freq": goal_freq,
-                "study_env": study_env,
-                "sleep_hours": sleep_hours,
-                "phone_hours": phone_hours,
-                "sleep_racing": sleep_race_text,
-                "sleep_racing_label": sleep_race,
-                "exam_blank": 1 if "Blank" in exam_feel else 0,
-                "friday_mood": friday_opts[friday_idx],
-                "friday_label": friday_mood,
-                "overwhelm": overwhelm_val,
-                "overwhelm_label": overwhelm,
-                "self_doubt": self_doubt_opts[self_doubt_idx],
-                "self_doubt_label": self_doubt,
-                "workload_freq": workload_idx,
-                "workload_label": workload_freq,
-                "time_enough": time_val,
-                "time_enough_label": time_enough,
-                "social_interaction_freq": social_freq_val,
-                "social_freq": social_freq,
-                "living_situation": living.replace(" (Paying Guest)", "").replace("PG (Paying Guest)", "PG"),
-                "financial_stress": financial,
-                "has_internship": 1 if internship == "Yes" else 0,
-                "has_job": 1 if part_job == "Yes" else 0,
-                "in_club": 1 if club == "Yes" else 0,
-                "puzzle_score": puzzle_val,
-                "puzzle_label": puzzle,
-                "edtech_list": edtech_selected,
-                "edtech_platforms": max(1, len([e for e in edtech_selected if e != "None"])),
-                "hobbies": hobbies_selected,
-                "hobbies_count": len(hobbies_selected),
-                "extra_activities": extra_selected,
-                "fav_subject": fav_subject,
-                "goal_5yr": goal_5yr,
-            }
+                # Merge remaining answers from this section
+                st.session_state.answers["fav_subject"] = fav_subject
+                st.session_state.answers["goal_5yr"] = goal_5yr
 
-            # ML inference
-            with st.spinner("🤖 Analysing your profile..."):
-                try:
-                    from utils.preprocessor import encode_input, compute_psychological_scores, get_student_archetype
-                    import joblib, os as _os
+                # Build the complete raw dict
+                raw = st.session_state.answers.copy()
+                # Add computed fields
+                raw.setdefault("student_type", _edu_to_type(raw.get("education_level", "UG Engineering/Technology")))
+                raw.setdefault("prefers_online_video", "Online Videos (YouTube etc.)" in raw.get("study_methods", []))
+                raw.setdefault("active_learner", any(m in raw.get("study_methods", []) for m in
+                                      ["Notes (handwritten)", "Flashcards / Revision Cards"]))
 
-                    scores = compute_psychological_scores(raw)
-                    fv = encode_input(raw)
+                # ML inference
+                with st.spinner("🤖 Analysing your profile..."):
+                    try:
+                        from utils.preprocessor import encode_input, compute_psychological_scores, get_student_archetype
+                        import joblib, os as _os
 
-                    MODEL_DIR = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), "models")
-                    rf = joblib.load(_os.path.join(MODEL_DIR, "model_learning_mode.pkl"))
-                    xgb = joblib.load(_os.path.join(MODEL_DIR, "model_stress.pkl"))
-                    lr = joblib.load(_os.path.join(MODEL_DIR, "model_risk.pkl"))
-                    le_mode = joblib.load(_os.path.join(MODEL_DIR, "le_mode.pkl"))
-                    le_stress = joblib.load(_os.path.join(MODEL_DIR, "le_stress.pkl"))
+                        scores = compute_psychological_scores(raw)
+                        fv = encode_input(raw)
 
-                    lm_pred = le_mode.inverse_transform(rf.predict(fv))[0]
-                    lm_proba = rf.predict_proba(fv)[0]
-                    lm_conf = round(float(max(lm_proba)) * 100, 0)
+                        MODEL_DIR = _os.path.join(_os.path.dirname(_os.path.dirname(__file__)), "models")
+                        rf = joblib.load(_os.path.join(MODEL_DIR, "model_learning_mode.pkl"))
+                        xgb = joblib.load(_os.path.join(MODEL_DIR, "model_stress.pkl"))
+                        lr = joblib.load(_os.path.join(MODEL_DIR, "model_risk.pkl"))
+                        le_mode = joblib.load(_os.path.join(MODEL_DIR, "le_mode.pkl"))
+                        le_stress = joblib.load(_os.path.join(MODEL_DIR, "le_stress.pkl"))
 
-                    stress_pred = le_stress.inverse_transform(xgb.predict(fv))[0]
-                    risk_pred = int(lr.predict(fv)[0])
-                    archetype_id = get_student_archetype(fv)
+                        lm_pred = le_mode.inverse_transform(rf.predict(fv))[0]
+                        lm_proba = rf.predict_proba(fv)[0]
+                        lm_conf = round(float(max(lm_proba)) * 100, 0)
 
-                    predictions = {
-                        "learning_mode": lm_pred,
-                        "learning_mode_confidence": lm_conf,
-                        "stress_level": stress_pred,
-                        "at_risk_flag": risk_pred,
-                        "archetype_id": archetype_id,
-                    }
-                except Exception as e:
-                    # Fallback: rule-based
-                    stress_idx = raw.get("overwhelm", 3) / 5.0
-                    lm_pred = "Hybrid"
-                    stress_pred = "High" if stress_idx > 0.65 else "Medium"
-                    risk_pred = 1 if raw.get("atkt", 0) else 0
-                    archetype_id = 0
-                    lm_conf = 72.0
-                    predictions = {
-                        "learning_mode": lm_pred,
-                        "learning_mode_confidence": lm_conf,
-                        "stress_level": stress_pred,
-                        "at_risk_flag": risk_pred,
-                        "archetype_id": archetype_id,
-                    }
-                    scores = {
-                        "stress_index": stress_idx,
-                        "anxiety_level": stress_idx * 80,
-                        "motivation_score": 55.0,
-                        "social_isolation": 4.5,
-                        "digital_comfort": 6.0,
-                        "academic_risk_flag": risk_pred,
-                        "overall_health": round((1 - stress_idx) * 70 + 20, 1),
-                    }
+                        stress_pred = le_stress.inverse_transform(xgb.predict(fv))[0]
+                        risk_pred = int(lr.predict(fv)[0])
+                        archetype_id = get_student_archetype(fv)
 
-                from utils.recommender import generate_recommendations
-                recs = generate_recommendations(scores, predictions, raw)
+                        predictions = {
+                            "learning_mode": lm_pred,
+                            "learning_mode_confidence": lm_conf,
+                            "stress_level": stress_pred,
+                            "at_risk_flag": risk_pred,
+                            "archetype_id": archetype_id,
+                        }
+                    except Exception as e:
+                        # Fallback: rule-based
+                        stress_idx = raw.get("overwhelm", 3) / 5.0
+                        lm_pred = "Hybrid"
+                        stress_pred = "High" if stress_idx > 0.65 else "Medium"
+                        risk_pred = 1 if raw.get("atkt", 0) else 0
+                        archetype_id = 0
+                        lm_conf = 72.0
+                        predictions = {
+                            "learning_mode": lm_pred,
+                            "learning_mode_confidence": lm_conf,
+                            "stress_level": stress_pred,
+                            "at_risk_flag": risk_pred,
+                            "archetype_id": archetype_id,
+                        }
+                        scores = {
+                            "stress_index": stress_idx,
+                            "anxiety_level": stress_idx * 80,
+                            "motivation_score": 55.0,
+                            "social_isolation": 4.5,
+                            "digital_comfort": 6.0,
+                            "academic_risk_flag": risk_pred,
+                            "overall_health": round((1 - stress_idx) * 70 + 20, 1),
+                        }
 
-            st.session_state.answers = raw
-            st.session_state.scores = scores
-            st.session_state.predictions = predictions
-            st.session_state.recs = recs
-            st.session_state.submitted = True
+                    from utils.recommender import generate_recommendations
+                    recs = generate_recommendations(scores, predictions, raw)
 
-            st.success({"en": "✅ Analysis complete! Redirecting to your results...",
-                        "mr": "✅ विश्लेषण पूर्ण! तुमच्या निकालांकडे जात आहे...",
-                        "hi": "✅ विश्लेषण पूर्ण! आपके परिणामों पर जा रहे हैं..."}[lang if lang in ["en","mr","hi"] else "en"])
-            st.session_state.nav_page = "Results"
-            st.rerun()
+                st.session_state.answers = raw
+                st.session_state.scores = scores
+                st.session_state.predictions = predictions
+                st.session_state.recs = recs
+                st.session_state.submitted = True
+                st.session_state.current_section = 0  # reset for next time
+
+                st.success({"en": "✅ Analysis complete! Redirecting to your results...",
+                            "mr": "✅ विश्लेषण पूर्ण! तुमच्या निकालांकडे जात आहे...",
+                            "hi": "✅ विश्लेषण पूर्ण! आपके परिणामों पर जा रहे हैं..."}[lang if lang in ["en","mr","hi"] else "en"])
+                st.session_state.nav_page = "Results"
+                st.rerun()
 
 
 def _edu_to_type(edu_level: str) -> str:

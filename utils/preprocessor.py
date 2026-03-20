@@ -15,8 +15,6 @@ def _load():
         _CACHE["data"] = (
             joblib.load(os.path.join(MODEL_DIR, "scaler.pkl")),
             joblib.load(os.path.join(MODEL_DIR, "label_encoders.pkl")),
-            joblib.load(os.path.join(MODEL_DIR, "le_mode.pkl")),
-            joblib.load(os.path.join(MODEL_DIR, "le_stress.pkl")),
             joblib.load(os.path.join(MODEL_DIR, "feature_cols.pkl")),
         )
     return _CACHE["data"]
@@ -138,7 +136,7 @@ def encode_input(raw: dict) -> np.ndarray:
     """
     Encodes raw questionnaire dict → scaled feature vector for ML inference.
     """
-    scaler, le_dict, le_mode, le_stress, feature_cols = _load()
+    scaler, le_dict, feature_cols = _load()
 
     num_vals = {
         "study_hours": raw.get("study_hours", 4),
@@ -174,7 +172,9 @@ def encode_input(raw: dict) -> np.ndarray:
         try:
             cat_vals[col + "_enc"] = int(le.transform([raw_val])[0])
         except ValueError:
-            cat_vals[col + "_enc"] = 0  # unknown category → 0
+            # Explicit unknown handling strategy: map to the most frequent/baseline class (index 0)
+            # Log this in a production system. For now, assign to the explicit baseline format.
+            cat_vals[col + "_enc"] = 0 
 
     sleep_race_val = SLEEP_RACE_MAP.get(raw.get("sleep_racing", "Sometimes"), 1)
     goal_val = GOAL_MAP.get(raw.get("goal_setting_freq", "Sometimes"), 2)
@@ -188,5 +188,7 @@ def encode_input(raw: dict) -> np.ndarray:
 
 
 def get_student_archetype(feature_vector: np.ndarray) -> int:
-    km = joblib.load(os.path.join(MODEL_DIR, "kmeans_archetype.pkl"))
+    if "kmeans" not in _CACHE:
+        _CACHE["kmeans"] = joblib.load(os.path.join(MODEL_DIR, "kmeans_archetype.pkl"))
+    km = _CACHE["kmeans"]
     return int(km.predict(feature_vector)[0])

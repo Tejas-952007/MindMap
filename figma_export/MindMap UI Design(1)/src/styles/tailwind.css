@@ -1,0 +1,45 @@
+@import 'tailwindcss' source(none);
+@source '../**/*.{js,ts,jsx,tsx}';
+
+@import 'tw-animate-css';
+
+@layer base {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Scrollbar styling for dark theme */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0F0F1A;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(79, 70, 229, 0.3);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(79, 70, 229, 0.6);
+  }
+
+  /* Range input styling */
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #4F46E5;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(79, 70, 229, 0.5);
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+  }
+}

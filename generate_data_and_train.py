@@ -1,5 +1,11 @@
 """
-One-shot script: Generates synthetic Pune student data and trains all ML models.
+Improved Script: Loads Pune student data and trains all ML models.
+Changes:
+  - Navin engineered features add kele (digital_score, engagement_score, etc.)
+  - Learning Mode: RF → XGBoost + GridSearchCV
+  - Stress Level: XGBoost tuned
+  - At-Risk: Logistic Regression (already good, minor tuning)
+  - Cross-validation added
 Run: python generate_data_and_train.py
 """
 
@@ -9,11 +15,15 @@ import json
 import joblib
 import os
 import random
+import warnings
+warnings.filterwarnings("ignore")  # XGBoost warnings band karto
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from sklearn.cluster import KMeans
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+from datetime import datetime
 from xgboost import XGBClassifier
 
 random.seed(42)
@@ -23,220 +33,25 @@ os.makedirs("models", exist_ok=True)
 os.makedirs("data", exist_ok=True)
 
 # ─────────────────────────────────────────────────────────────
-# 1. Synthetic data generation
+# 1. Data Load
 # ─────────────────────────────────────────────────────────────
-PUNE_COLLEGES = [
-    "COEP Technological University",
-    "Symbiosis Institute of Technology",
-    "MIT-WPU",
-    "VIT Pune",
-    "Bharati Vidyapeeth",
-    "Savitribai Phule Pune University Affiliated College",
-    "Pune Institute of Computer Technology",
-    "Modern College of Arts, Science and Commerce",
-    "Fergusson College",
-    "BMCC Pune",
-]
-BRANCHES = ["Computer Engineering", "Mechanical Engineering", "Civil Engineering",
-            "Electronics & TC", "MBA", "MSc Data Science", "BCA", "BCom",
-            "BA Psychology", "MBBS", "B.Sc Nursing", "BA English Literature"]
-HOBBIES = ["Reading", "Gaming", "Music", "Sports", "Cooking", "Painting",
-           "Coding", "Yoga", "Dancing", "Photography", "Gardening", "Writing"]
-EDTECH = ["YouTube", "Coursera", "Unacademy", "NPTEL", "Khan Academy",
-          "Udemy", "Byju's", "Vedantu"]
 
-STUDENT_TYPES = [
-    ("Engineering", 200, 0.70, 0.55, 0.45),
-    ("School", 150, 0.45, 0.40, 0.60),
-    ("Postgraduate", 100, 0.55, 0.65, 0.35),
-    ("Arts_Commerce", 100, 0.35, 0.50, 0.50),
-    ("Working_Professional", 50, 0.75, 0.80, 0.20),
-]
-
-first_names_m = ["Aarav", "Arjun", "Rohan", "Vedant", "Yash", "Siddharth",
-                 "Karan", "Nikhil", "Pranav", "Akash", "Gaurav", "Harsh",
-                 "Ishaan", "Jay", "Kunal", "Manish", "Omkar", "Parth",
-                 "Rahul", "Sachin", "Tanmay", "Uday", "Vivek", "Waqar",
-                 "Aniket", "Bhushan", "Chinmay", "Devesh", "Eshan", "Farhan"]
-first_names_f = ["Aditi", "Ananya", "Bhakti", "Chaitali", "Divya", "Ekta",
-                 "Gauri", "Harshada", "Ishita", "Jyoti", "Kajal", "Lavanya",
-                 "Madhuri", "Neha", "Pooja", "Priya", "Riya", "Sneha",
-                 "Swati", "Tanvi", "Uma", "Vidya", "Yogita", "Zara",
-                 "Aishwarya", "Bhavna", "Deepali", "Geeta", "Kirti", "Meera"]
-last_names = ["Patil", "Jadhav", "Kulkarni", "Shinde", "Deshmukh", "More",
-              "Pawar", "Bhosale", "Mane", "Salunkhe", "Gaikwad", "Kale",
-              "Sawant", "Mohite", "Deshpande", "Joshi", "Nair", "Shah",
-              "Mehta", "Sharma", "Verma", "Singh", "Kumar", "Patel"]
-
-
-def random_name(gender):
-    if gender == "Male":
-        return f"{random.choice(first_names_m)} {random.choice(last_names)}"
-    elif gender == "Female":
-        return f"{random.choice(first_names_f)} {random.choice(last_names)}"
-    else:
-        return f"{random.choice(first_names_m + first_names_f)} {random.choice(last_names)}"
-
-
-records = []
-
-for student_type, count, stress_prob, online_pref, offline_pref in STUDENT_TYPES:
-    for _ in range(count):
-        gender = random.choices(["Male", "Female", "Other"],
-                                weights=[0.52, 0.45, 0.03])[0]
-        name = random_name(gender)
-
-        is_stressed = random.random() < stress_prob
-        is_online_pref = random.random() < online_pref
-
-        # Derive base scores that will be used to answer questions coherently
-        stress_base = np.clip(np.random.normal(0.65 if is_stressed else 0.30, 0.15), 0, 1)
-        motivation_base = np.clip(np.random.normal(0.4 if is_stressed else 0.7, 0.15), 0, 1)
-        social_base = np.clip(np.random.normal(0.35 if is_online_pref else 0.65, 0.15), 0, 1)
-        digital_base = np.clip(np.random.normal(0.75 if is_online_pref else 0.35, 0.15), 0, 1)
-
-        # Questionnaire responses
-        study_hours = max(0, round(np.random.normal(4 if is_stressed else 5, 1.5)))
-        attend_hours = max(0, round(np.random.normal(15 if not is_stressed else 10, 4)))
-        confidence = max(1, min(5, round(np.random.normal(2.5 if is_stressed else 3.8, 0.8))))
-        sleep_hours = max(2, min(12, round(np.random.normal(5.5 if is_stressed else 7, 1))))
-        social_interaction_freq = random.choices(
-            [1, 2, 3, 4], weights=[
-                0.4 if is_stressed else 0.1,
-                0.3, 0.2,
-                0.1 if is_stressed else 0.4
-            ]
-        )[0]  # 1=rarely, 4=daily
-        phone_hours = max(0, min(12, round(np.random.normal(5 if is_stressed else 3, 1.5))))
-        friends_count = max(0, round(np.random.normal(2 if social_base < 0.4 else 7, 2)))
-        sgpa = max(4.0, min(10.0, round(np.random.normal(5.5 if is_stressed else 7.5, 1), 1)))
-        atkt = 1 if sgpa < 5.5 and random.random() < 0.4 else 0
-
-        sleep_race = random.choices(["Never", "Sometimes", "Often", "Always"],
-                                    weights=[0.1, 0.2, 0.35, 0.35] if stress_base > 0.5
-                                    else [0.4, 0.35, 0.15, 0.1])[0]
-        exam_feeling = 1 if stress_base > 0.55 else 0  # 0=sharp, 1=blank scattered
-        overwhelm_scale = max(1, min(5, round(5 * stress_base + np.random.normal(0, 0.5))))
-        friday_feeling = random.choices(
-            ["Exhausted and drained", "Tired but okay", "Neutral", "Relieved", "Energised"],
-            weights=[0.35, 0.30, 0.15, 0.12, 0.08] if is_stressed
-            else [0.05, 0.20, 0.25, 0.30, 0.20]
-        )[0]
-        self_doubt = random.choices(["Yes, I doubt them", "Sometimes", "No, I believe them"],
-                                    weights=[0.45, 0.35, 0.20] if stress_base > 0.55
-                                    else [0.10, 0.30, 0.60])[0]
-        workload_overload_freq = random.choices([1, 2, 3, 4],
-                                               weights=[0.05, 0.15, 0.35, 0.45] if is_stressed
-                                               else [0.35, 0.35, 0.20, 0.10])[0]
-        goal_freq = random.choices(["Never", "Rarely", "Sometimes", "Often", "Always"],
-                                   weights=[0.3, 0.25, 0.25, 0.15, 0.05] if stress_base > 0.5
-                                   else [0.05, 0.10, 0.25, 0.35, 0.25])[0]
-        time_enough = max(1, min(5, round(5 * (1 - stress_base) + np.random.normal(0, 0.5))))
-        puzzle_enjoyment = max(1, min(5, round(np.random.normal(3, 1))))
-        engagement_scale = max(1, min(5, round(np.random.normal(2.5 if stress_base > 0.5 else 3.8, 0.8))))
-
-        financial = random.choices(
-            ["Very Comfortable", "Comfortable", "Moderate", "Tight", "Financially Struggling"],
-            weights=[0.10, 0.25, 0.35, 0.20, 0.10]
-        )[0]
-
-        living = random.choices(
-            ["Home", "Hostel", "PG", "Relatives"],
-            weights=[0.45, 0.30, 0.15, 0.10]
-        )[0]
-
-        has_internship = random.random() < (0.5 if student_type == "Engineering" else 0.2)
-        has_job = random.random() < (0.9 if student_type == "Working_Professional" else 0.1)
-        in_club = random.random() < 0.3
-        edtech_count = random.randint(1, 4)
-        hobbies_count = random.randint(1, 4)
-
-        num_methods = random.choices([1, 2, 3, 4], weights=[0.1, 0.3, 0.4, 0.2])[0]
-        all_methods = ["Notes", "PDF", "Books", "Lectures", "Online Videos", "Peer Teaching", "Flashcards"]
-        methods = random.sample(all_methods, num_methods)
-        prefers_online_video = "Online Videos" in methods
-
-        # Determine label
-        if stress_base > 0.75:
-            stress_level = "Critical"
-        elif stress_base > 0.55:
-            stress_level = "High"
-        elif stress_base > 0.35:
-            stress_level = "Medium"
-        else:
-            stress_level = "Low"
-
-        # Learning mode
-        if digital_base > 0.65 and social_base < 0.45:
-            learning_mode = "Online"
-        elif social_base > 0.6 and digital_base < 0.5:
-            learning_mode = "Offline"
-        else:
-            learning_mode = "Hybrid"
-
-        at_risk = 1 if (atkt == 1 or (sgpa < 5.0 and stress_base > 0.6) or
-                        (motivation_base < 0.3 and stress_base > 0.65)) else 0
-
-        rec = {
-            "name": name,
-            "gender": gender,
-            "student_type": student_type,
-            "education_level": student_type.replace("_", " "),
-            "branch": random.choice(BRANCHES),
-            "study_hours": study_hours,
-            "attend_hours": attend_hours,
-            "confidence": confidence,
-            "prefers_online_video": int(prefers_online_video),
-            "active_learner": int("Notes" in methods or "Flashcards" in methods),
-            "sleep_hours": sleep_hours,
-            "sleep_racing": sleep_race,
-            "exam_blank": exam_feeling,
-            "overwhelm": overwhelm_scale,
-            "friday_mood": friday_feeling,
-            "self_doubt": self_doubt,
-            "workload_freq": workload_overload_freq,
-            "goal_setting_freq": goal_freq,
-            "time_enough": time_enough,
-            "puzzle_score": puzzle_enjoyment,
-            "engagement": engagement_scale,
-            "financial_stress": financial,
-            "living_situation": living,
-            "phone_hours": phone_hours,
-            "friends_count": friends_count,
-            "sgpa": sgpa,
-            "atkt": atkt,
-            "has_internship": int(has_internship),
-            "has_job": int(has_job),
-            "in_club": int(in_club),
-            "edtech_platforms": edtech_count,
-            "hobbies_count": hobbies_count,
-            "social_interaction_freq": social_interaction_freq,
-            # Computed scores
-            "stress_base": round(stress_base, 3),
-            "motivation_base": round(motivation_base, 3),
-            "social_base": round(social_base, 3),
-            "digital_base": round(digital_base, 3),
-            # Targets
-            "stress_level": stress_level,
-            "learning_mode": learning_mode,
-            "at_risk_flag": at_risk,
-        }
-        records.append(rec)
-
-df = pd.DataFrame(records)
-df.to_csv("data/student_data.csv", index=False)
-print(f"✅ Generated {len(df)} student records → data/student_data.csv")
-print(df["stress_level"].value_counts())
-print(df["learning_mode"].value_counts())
+if os.path.exists("data/student_data.csv"):
+    df = pd.read_csv("data/student_data.csv")
+    print(f"✅ Loaded {len(df)} student records from data/student_data.csv")
+else:
+    print("❌ data/student_data.csv not found!")
+    exit(1)
 
 
 # ─────────────────────────────────────────────────────────────
-# 2. Feature engineering & preprocessing
+# 2. Feature Engineering & Preprocessing
 # ─────────────────────────────────────────────────────────────
 
 CAT_COLS = ["gender", "student_type", "education_level", "branch",
             "sleep_racing", "friday_mood", "self_doubt", "goal_setting_freq",
             "financial_stress", "living_situation"]
+
 NUM_COLS = ["study_hours", "attend_hours", "confidence", "prefers_online_video",
             "active_learner", "sleep_hours", "exam_blank", "overwhelm",
             "workload_freq", "time_enough", "puzzle_score", "engagement",
@@ -252,13 +67,79 @@ for col in CAT_COLS:
     df_enc[col + "_enc"] = le.fit_transform(df_enc[col].astype(str))
     le_dict[col] = le
 
-# Map ordinal
+# Ordinal mapping
 sleep_racing_map = {"Never": 0, "Sometimes": 1, "Often": 2, "Always": 3}
 goal_map = {"Never": 0, "Rarely": 1, "Sometimes": 2, "Often": 3, "Always": 4}
 df_enc["sleep_racing_num"] = df_enc["sleep_racing"].map(sleep_racing_map)
-df_enc["goal_freq_num"] = df_enc["goal_setting_freq"].map(goal_map)
+df_enc["goal_freq_num"]    = df_enc["goal_setting_freq"].map(goal_map)
 
-FEATURE_COLS = NUM_COLS + [c + "_enc" for c in CAT_COLS] + ["sleep_racing_num", "goal_freq_num"]
+# ─────────────────────────────────────────────────────────────
+# NAVIN ENGINEERED FEATURES
+# ─────────────────────────────────────────────────────────────
+
+# 1. Digital Score — student kitna online-oriented ahe
+#    High digital score → Online learning suit hoil
+df_enc["digital_score"] = (
+    df_enc["prefers_online_video"] * 2 +
+    df_enc["phone_hours"] +
+    df_enc["edtech_platforms"]
+)
+
+# 2. Engagement Score — student class madhe kitna active ahe
+#    High engagement → Offline learning suit hoil
+df_enc["engagement_score"] = (
+    df_enc["engagement"] +
+    df_enc["active_learner"] +
+    df_enc["attend_hours"]
+)
+
+# 3. Academic Pressure Score — stress + workload combine
+df_enc["academic_pressure"] = (
+    df_enc["overwhelm"] +
+    df_enc["workload_freq"] +
+    df_enc["atkt"] +
+    (10 - df_enc["sgpa"])   # low sgpa = jast pressure
+)
+
+# 4. Social Score — student kitna social ahe
+df_enc["social_score"] = (
+    df_enc["friends_count"] +
+    df_enc["social_interaction_freq"] +
+    df_enc["in_club"]
+)
+
+# 5. Study Efficiency — study hours vs attend hours ratio
+df_enc["study_efficiency"] = (
+    df_enc["study_hours"] / (df_enc["attend_hours"] + 1)
+)
+
+# 6. Wellbeing Score — sleep + confidence + hobbies
+df_enc["wellbeing_score"] = (
+    df_enc["sleep_hours"] +
+    df_enc["confidence"] +
+    df_enc["hobbies_count"]
+)
+
+print("✅ Navin 6 engineered features banvle!")
+
+# ─────────────────────────────────────────────────────────────
+# Feature columns — Navin features include kele
+# ─────────────────────────────────────────────────────────────
+
+ENGINEERED_COLS = [
+    "digital_score", "engagement_score", "academic_pressure",
+    "social_score", "study_efficiency", "wellbeing_score"
+]
+
+FEATURE_COLS = (
+    NUM_COLS +
+    [c + "_enc" for c in CAT_COLS] +
+    ["sleep_racing_num", "goal_freq_num"] +
+    ENGINEERED_COLS
+)
+
+print(f"✅ Total features: {len(FEATURE_COLS)}")
+
 X = df_enc[FEATURE_COLS].fillna(0)
 
 # Scale
@@ -266,64 +147,236 @@ scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
 # Encode targets
-le_mode = LabelEncoder()
+le_mode   = LabelEncoder()
 le_stress = LabelEncoder()
-y_mode = le_mode.fit_transform(df["learning_mode"])
+y_mode   = le_mode.fit_transform(df["learning_mode"])
 y_stress = le_stress.fit_transform(df["stress_level"])
-y_risk = df["at_risk_flag"].values
+y_risk   = df["at_risk_flag"].values
 
 df_enc.to_csv("data/processed_data.csv", index=False)
 print("✅ Preprocessed data saved → data/processed_data.csv")
 
 
 # ─────────────────────────────────────────────────────────────
-# 3. Model training
+# 3. Train/Test Split
 # ─────────────────────────────────────────────────────────────
 
-X_tr_m, X_te_m, y_tr_m, y_te_m = train_test_split(X_scaled, y_mode, test_size=0.2, random_state=42)
-X_tr_s, X_te_s, y_tr_s, y_te_s = train_test_split(X_scaled, y_stress, test_size=0.2, random_state=42)
-X_tr_r, X_te_r, y_tr_r, y_te_r = train_test_split(X_scaled, y_risk, test_size=0.2, random_state=42)
+X_tr_m, X_te_m, y_tr_m, y_te_m = train_test_split(X_scaled, y_mode,   test_size=0.2, random_state=42, stratify=y_mode)
+X_tr_s, X_te_s, y_tr_s, y_te_s = train_test_split(X_scaled, y_stress, test_size=0.2, random_state=42, stratify=y_stress)
+X_tr_r, X_te_r, y_tr_r, y_te_r = train_test_split(X_scaled, y_risk,   test_size=0.2, random_state=42, stratify=y_risk)
 
-# Learning mode – Random Forest
-rf_mode = RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42, class_weight="balanced")
-rf_mode.fit(X_tr_m, y_tr_m)
-acc_mode = rf_mode.score(X_te_m, y_te_m)
-print(f"✅ Learning mode RF accuracy: {acc_mode:.3f}")
+experiment_log = {
+    "timestamp": datetime.now().isoformat(),
+    "dataset_summary": {
+        "total_records": len(df),
+        "stress_level_counts":  df["stress_level"].value_counts().to_dict(),
+        "learning_mode_counts": df["learning_mode"].value_counts().to_dict(),
+        "at_risk_counts":       df["at_risk_flag"].value_counts().to_dict()
+    },
+    "models": {}
+}
 
-# Stress level – XGBoost
-xgb_stress = XGBClassifier(n_estimators=150, max_depth=6, learning_rate=0.1,
-                            use_label_encoder=False, eval_metric="mlogloss", random_state=42)
-xgb_stress.fit(X_tr_s, y_tr_s)
-acc_stress = xgb_stress.score(X_te_s, y_te_s)
-print(f"✅ Stress XGBoost accuracy: {acc_stress:.3f}")
 
-# At-risk – Logistic Regression
-lr_risk = LogisticRegression(max_iter=1000, class_weight="balanced", random_state=42)
-lr_risk.fit(X_tr_r, y_tr_r)
-acc_risk = lr_risk.score(X_te_r, y_te_r)
-print(f"✅ At-risk LR accuracy: {acc_risk:.3f}")
+# ─────────────────────────────────────────────────────────────
+# 4A. Learning Mode — XGBoost + GridSearchCV
+#     (RF hota aadhi — XGBoost + tuning ne improve kela)
+# ─────────────────────────────────────────────────────────────
 
-# K-Means clustering (archetypes)
-km = KMeans(n_clusters=6, random_state=42, n_init=10)
+
+param_grid_mode = {
+    "n_estimators":  [100, 200, 300],
+    "max_depth":     [4, 6, 8],
+    "learning_rate": [0.05, 0.1, 0.2],
+    "subsample":     [0.8, 1.0]
+}
+
+xgb_mode_base = XGBClassifier(
+    eval_metric="mlogloss",
+    random_state=42
+)
+
+grid_mode = GridSearchCV(
+    xgb_mode_base,
+    param_grid_mode,
+    cv=5,
+    scoring="accuracy",
+    n_jobs=-1,
+    verbose=0
+)
+grid_mode.fit(X_tr_m, y_tr_m)
+
+best_mode_model = grid_mode.best_estimator_
+y_pred_m        = best_mode_model.predict(X_te_m)
+acc_mode        = best_mode_model.score(X_te_m, y_te_m)
+
+# Cross-validation score pan baghuy
+cv_scores_mode = cross_val_score(best_mode_model, X_scaled, y_mode, cv=5, scoring="accuracy")
+
+print(f"✅ Best Params (Learning Mode): {grid_mode.best_params_}")
+print(f"✅ Learning Mode NEW accuracy:  {acc_mode:.3f}")
+print(f"✅ Cross-Val Accuracy (5-fold): {cv_scores_mode.mean():.3f} ± {cv_scores_mode.std():.3f}")
+print("\nLearning Mode Classification Report:")
+print(classification_report(y_te_m, y_pred_m, target_names=le_mode.classes_))
+
+experiment_log["models"]["learning_mode_xgb"] = {
+    "best_params":             grid_mode.best_params_,
+    "accuracy":                acc_mode,
+    "cv_mean":                 cv_scores_mode.mean(),
+    "cv_std":                  cv_scores_mode.std(),
+    "classification_report":   classification_report(y_te_m, y_pred_m, output_dict=True),
+    "confusion_matrix":        confusion_matrix(y_te_m, y_pred_m).tolist()
+}
+
+
+# ─────────────────────────────────────────────────────────────
+# 4B. Stress Level — XGBoost + GridSearchCV
+#     (Already 77% hota — tuning ne improve karnyacha try)
+# ─────────────────────────────────────────────────────────────
+
+
+param_grid_stress = {
+    "n_estimators":  [150, 200, 300],
+    "max_depth":     [4, 6, 8],
+    "learning_rate": [0.05, 0.1, 0.15],
+    "subsample":     [0.8, 1.0],
+    "colsample_bytree": [0.8, 1.0]
+}
+
+xgb_stress_base = XGBClassifier(
+    eval_metric="mlogloss",
+    random_state=42
+)
+
+grid_stress = GridSearchCV(
+    xgb_stress_base,
+    param_grid_stress,
+    cv=5,
+    scoring="accuracy",
+    n_jobs=-1,
+    verbose=0
+)
+grid_stress.fit(X_tr_s, y_tr_s)
+
+best_stress_model = grid_stress.best_estimator_
+y_pred_s          = best_stress_model.predict(X_te_s)
+acc_stress        = best_stress_model.score(X_te_s, y_te_s)
+
+cv_scores_stress = cross_val_score(best_stress_model, X_scaled, y_stress, cv=5, scoring="accuracy")
+
+print(f"✅ Best Params (Stress): {grid_stress.best_params_}")
+print(f"✅ Stress NEW accuracy:  {acc_stress:.3f}")
+print(f"✅ Cross-Val Accuracy (5-fold): {cv_scores_stress.mean():.3f} ± {cv_scores_stress.std():.3f}")
+print("\nStress Level Classification Report:")
+print(classification_report(y_te_s, y_pred_s, target_names=le_stress.classes_))
+
+experiment_log["models"]["stress_level_xgb"] = {
+    "best_params":           grid_stress.best_params_,
+    "accuracy":              acc_stress,
+    "cv_mean":               cv_scores_stress.mean(),
+    "cv_std":                cv_scores_stress.std(),
+    "classification_report": classification_report(y_te_s, y_pred_s, output_dict=True),
+    "confusion_matrix":      confusion_matrix(y_te_s, y_pred_s).tolist()
+}
+
+
+# ─────────────────────────────────────────────────────────────
+# 4C. At-Risk — Logistic Regression (already 91% AUC — minor tuning)
+# ─────────────────────────────────────────────────────────────
+
+print("\n⏳ At-Risk: Training...")
+
+param_grid_risk = {
+    "C":       [0.01, 0.1, 1, 10],
+    "penalty": ["l1", "l2"],
+    "solver":  ["liblinear"]
+}
+
+lr_base = LogisticRegression(
+    class_weight="balanced",
+    random_state=42,
+    max_iter=1000
+)
+
+grid_risk = GridSearchCV(
+    lr_base,
+    param_grid_risk,
+    cv=5,
+    scoring="roc_auc",
+    n_jobs=-1,
+    verbose=0
+)
+grid_risk.fit(X_tr_r, y_tr_r)
+
+best_risk_model = grid_risk.best_estimator_
+y_pred_r        = best_risk_model.predict(X_te_r)
+y_prob_r        = best_risk_model.predict_proba(X_te_r)[:, 1]
+acc_risk        = best_risk_model.score(X_te_r, y_te_r)
+roc_auc         = roc_auc_score(y_te_r, y_prob_r)
+
+cv_scores_risk = cross_val_score(best_risk_model, X_scaled, y_risk, cv=5, scoring="roc_auc")
+
+print(f"✅ Best Params (At-Risk): {grid_risk.best_params_}")
+print(f"✅ At-Risk accuracy: {acc_risk:.3f}  |  ROC-AUC: {roc_auc:.3f}")
+print(f"✅ Cross-Val AUC (5-fold): {cv_scores_risk.mean():.3f} ± {cv_scores_risk.std():.3f}")
+print("\nAt-Risk Classification Report:")
+print(classification_report(y_te_r, y_pred_r))
+
+experiment_log["models"]["at_risk_lr"] = {
+    "best_params":           grid_risk.best_params_,
+    "accuracy":              acc_risk,
+    "roc_auc":               roc_auc,
+    "cv_auc_mean":           cv_scores_risk.mean(),
+    "cv_auc_std":            cv_scores_risk.std(),
+    "classification_report": classification_report(y_te_r, y_pred_r, output_dict=True),
+    "confusion_matrix":      confusion_matrix(y_te_r, y_pred_r).tolist()
+}
+
+
+# ─────────────────────────────────────────────────────────────
+# 4D. K-Means Clustering (Archetypes) — Same as before
+# ─────────────────────────────────────────────────────────────
+
+km_params = {"n_clusters": 6, "random_state": 42, "n_init": 10}
+km = KMeans(**km_params)
 km.fit(X_scaled)
-print(f"✅ K-Means trained (6 clusters)")
+print(f"\n✅ K-Means trained (6 clusters) | Inertia: {km.inertia_:.2f}")
+
+experiment_log["models"]["kmeans_archetypes"] = {
+    "params":  km_params,
+    "inertia": km.inertia_
+}
+
 
 # ─────────────────────────────────────────────────────────────
-# 4. Save models
+# 5. Save Experiment Log
 # ─────────────────────────────────────────────────────────────
-joblib.dump(rf_mode, "models/model_learning_mode.pkl")
-joblib.dump(xgb_stress, "models/model_stress.pkl")
-joblib.dump(lr_risk, "models/model_risk.pkl")
-joblib.dump(km, "models/kmeans_archetype.pkl")
-joblib.dump(scaler, "models/scaler.pkl")
-joblib.dump(le_dict, "models/label_encoders.pkl")
-joblib.dump(le_mode, "models/le_mode.pkl")
-joblib.dump(le_stress, "models/le_stress.pkl")
-joblib.dump(FEATURE_COLS, "models/feature_cols.pkl")
+
+with open("models/experiment_log.json", "w") as f:
+    json.dump(experiment_log, f, indent=2)
+print("✅ Experiment log saved → models/experiment_log.json")
+
 
 # ─────────────────────────────────────────────────────────────
-# 5. Recommendation rules
+# 6. Save All Models
 # ─────────────────────────────────────────────────────────────
+
+joblib.dump(best_mode_model,   "models/model_learning_mode.pkl")
+joblib.dump(best_stress_model, "models/model_stress.pkl")
+joblib.dump(best_risk_model,   "models/model_risk.pkl")
+joblib.dump(km,                "models/kmeans_archetype.pkl")
+joblib.dump(scaler,            "models/scaler.pkl")
+joblib.dump(le_dict,           "models/label_encoders.pkl")
+joblib.dump(le_mode,           "models/le_mode.pkl")
+joblib.dump(le_stress,         "models/le_stress.pkl")
+joblib.dump(FEATURE_COLS,      "models/feature_cols.pkl")
+
+print("✅ all models saved → models/ directory")
+
+
+# ─────────────────────────────────────────────────────────────
+# 7. Recommendation Rules (same as before)
+# ─────────────────────────────────────────────────────────────
+
 recs_json = {
     "archetypes": {
         "0": {
@@ -428,5 +481,4 @@ with open("models/recommendation_rules.json", "w") as f:
     json.dump(recs_json, f, indent=2)
 
 print("✅ Recommendation rules saved → models/recommendation_rules.json")
-print("\n🎉 All models trained and saved to /models/ directory")
-print("   Run: streamlit run app.py")
+

@@ -54,11 +54,14 @@ lang = st.session_state.lang   # short alias used throughout
 with st.sidebar:
     # ── Brand ─────────────────────────────────────────────────
     st.markdown(f"""
-    <div style="text-align:center; padding: 12px 0 10px;">
-        <div style="font-size:2rem;">🧠</div>
+    <div style="text-align:center; padding: 16px 0 14px;">
+        <div style="font-size:2.5rem; filter: drop-shadow(0 0 12px rgba(99,102,241,0.3));
+                    margin-bottom:4px;">🧠</div>
         <div style="font-family:'Space Grotesk',sans-serif; font-weight:700;
-                    font-size:1.2rem; color:#A5B4FC; margin-top:6px;">MindMap</div>
-        <div style="font-size:0.7rem; color:#64748B; margin-top:2px;">
+                    font-size:1.3rem; margin-top:6px;
+                    background: linear-gradient(135deg, #C7D2FE, #A5B4FC, #818CF8);
+                    -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MindMap</div>
+        <div style="font-size:0.7rem; color:#475569; margin-top:4px; letter-spacing:0.5px;">
             {t("app_tagline", lang)}
         </div>
     </div>
